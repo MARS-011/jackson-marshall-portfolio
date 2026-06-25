@@ -6,7 +6,7 @@
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
-// Initialize Lenis smooth scroll
+// Initialize Lenis smooth scroll with optimized settings
 const lenis = new Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -39,58 +39,73 @@ gsap.ticker.lagSmoothing(0);
    HERO ANIMATIONS
    ============================================================================ */
 
-// Hero title and subtitle are animated via CSS keyframes with 0.8s delay
-// This ensures they fade in after the video starts
+// Hero title and subtitle fade in with stagger
+const heroTitle = document.querySelector('.hero-title');
+const heroSubtitle = document.querySelector('.hero-subtitle');
+
+if (heroTitle && heroSubtitle) {
+    gsap.from([heroTitle, heroSubtitle], {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        delay: 0.8,
+        stagger: 0.2,
+        ease: 'power2.out',
+    });
+}
 
 /* ============================================================================
    SCROLL-TRIGGERED SECTION ANIMATIONS
    ============================================================================ */
 
-// Animate About section
+// Animate About section on scroll
 const aboutSection = document.querySelector('.about');
 if (aboutSection) {
-    gsap.to(aboutSection, {
+    gsap.from(aboutSection, {
         scrollTrigger: {
             trigger: aboutSection,
-            start: 'top 80%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
+            once: true,
         },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out',
     });
 }
 
-// Animate Projects section
+// Animate Projects section on scroll
 const projectsSection = document.querySelector('.projects');
 if (projectsSection) {
-    gsap.to(projectsSection, {
+    gsap.from(projectsSection, {
         scrollTrigger: {
             trigger: projectsSection,
-            start: 'top 80%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
+            once: true,
         },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out',
     });
 }
 
-// Animate Contact section
+// Animate Contact section on scroll
 const contactSection = document.querySelector('.contact');
 if (contactSection) {
-    gsap.to(contactSection, {
+    gsap.from(contactSection, {
         scrollTrigger: {
             trigger: contactSection,
-            start: 'top 80%',
+            start: 'top 85%',
             toggleActions: 'play none none none',
+            once: true,
         },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        ease: 'power2.out',
     });
 }
 
@@ -100,17 +115,18 @@ if (contactSection) {
 
 const projectCards = document.querySelectorAll('.project-card');
 if (projectCards.length > 0) {
-    gsap.to(projectCards, {
+    gsap.from(projectCards, {
         scrollTrigger: {
             trigger: projectsSection,
-            start: 'top 70%',
+            start: 'top 75%',
             toggleActions: 'play none none none',
+            once: true,
         },
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        opacity: 0,
+        y: 15,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: 'power2.out',
     });
 }
 
@@ -122,7 +138,7 @@ projectCards.forEach((card) => {
     card.addEventListener('mouseenter', () => {
         gsap.to(card, {
             borderColor: 'rgba(184, 197, 255, 0.35)',
-            duration: 0.3,
+            duration: 0.2,
             overwrite: 'auto',
         });
     });
@@ -130,7 +146,7 @@ projectCards.forEach((card) => {
     card.addEventListener('mouseleave', () => {
         gsap.to(card, {
             borderColor: 'rgba(184, 197, 255, 0.15)',
-            duration: 0.3,
+            duration: 0.2,
             overwrite: 'auto',
         });
     });
@@ -142,20 +158,33 @@ projectCards.forEach((card) => {
 
 const bgVideo = document.querySelector('.bg-video');
 
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        bgVideo.pause();
-    } else {
-        bgVideo.play();
-    }
-});
-
-// Ensure video plays on load
-bgVideo.addEventListener('loadedmetadata', () => {
-    bgVideo.play().catch((err) => {
-        console.log('Autoplay prevented:', err);
+if (bgVideo) {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            bgVideo.pause();
+        } else {
+            bgVideo.play().catch((err) => {
+                console.log('Autoplay prevented:', err);
+            });
+        }
     });
-});
+
+    // Ensure video plays on load
+    bgVideo.addEventListener('loadedmetadata', () => {
+        bgVideo.play().catch((err) => {
+            console.log('Autoplay prevented:', err);
+        });
+    });
+
+    // Fallback: try to play on first user interaction
+    document.addEventListener('click', () => {
+        if (bgVideo.paused) {
+            bgVideo.play().catch((err) => {
+                console.log('Autoplay prevented:', err);
+            });
+        }
+    }, { once: true });
+}
 
 /* ============================================================================
    ACCESSIBILITY — REDUCED MOTION CHECK
@@ -164,12 +193,19 @@ bgVideo.addEventListener('loadedmetadata', () => {
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 if (prefersReducedMotion) {
-    // Disable all GSAP animations for users who prefer reduced motion
-    gsap.globalTimeline.timeScale(0);
-    gsap.globalTimeline.timeScale(1);
-    
-    // Alternatively, you can set animations to instant
+    // Disable smooth scroll for users who prefer reduced motion
+    lenis.destroy();
     document.documentElement.style.scrollBehavior = 'auto';
+}
+
+/* ============================================================================
+   SMOOTH SCROLL OPTIMIZATION
+   ============================================================================ */
+
+// Disable smooth scroll on mobile for better performance
+const isMobile = window.innerWidth < 768;
+if (isMobile) {
+    lenis.destroy();
 }
 
 /* ============================================================================

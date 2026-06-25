@@ -11,7 +11,7 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 
 body {
@@ -20,6 +20,7 @@ body {
     color: #e8ecff;
     overflow-x: hidden;
     line-height: 1.6;
+    scroll-behavior: auto;
 }
 
 /* Background Video */
@@ -192,9 +193,9 @@ p {
     background: rgba(10, 14, 46, 0.8);
     border: 1px solid rgba(184, 197, 255, 0.15);
     border-radius: 2px;
-    transition: all 0.4s ease;
-    opacity: 0;
-    transform: translateY(30px);
+    transition: border-color 0.3s ease;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .project-card.in-view {
@@ -278,8 +279,8 @@ p {
 .about,
 .projects,
 .contact {
-    opacity: 0;
-    transform: translateY(30px);
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .about.scroll-in,
@@ -287,7 +288,7 @@ p {
 .contact.scroll-in {
     opacity: 1;
     transform: translateY(0);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Smooth underline on nav-like links (future use) */
