@@ -11,15 +11,25 @@
 </head>
 <body>
     <!-- Background Video -->
-    <video class="bg-video" autoplay muted playsinline loop>
+    <!-- poster attribute prevents blank flash before video loads -->
+    <video class="bg-video" autoplay muted playsinline loop poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1' height='1'%3E%3Crect fill='%230a0e2e'/%3E%3C/svg%3E">
         <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
         <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
     </video>
 
+    <!-- Navigation -->
+    <nav class="site-nav" aria-label="Site navigation">
+        <ul class="nav-list">
+            <li><a class="nav-link" href="#about">About</a></li>
+            <li><a class="nav-link" href="#projects">Projects</a></li>
+            <li><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
     <!-- Content Container -->
     <div class="content-wrapper">
         <!-- Hero Section -->
-        <section class="hero">
+        <section class="hero" id="hero">
             <div class="hero-content">
                 <h1 class="hero-title">JACKSON MARSHALL</h1>
                 <p class="hero-subtitle">Chemical Engineering · Dalhousie University</p>
@@ -27,7 +37,7 @@
         </section>
 
         <!-- About Section -->
-        <section class="about">
+        <section class="about" id="about">
             <div class="section-content">
                 <p class="about-text">
                     Chemical engineer with expertise in process optimization, sustainable systems design, and technical problem-solving. Focused on applying rigorous analytical methods to real-world challenges in energy, materials, and environmental engineering. Proficient in laboratory protocols, data analysis, and cross-functional collaboration.
@@ -44,7 +54,7 @@
         </section>
 
         <!-- Projects Section -->
-        <section class="projects">
+        <section class="projects" id="projects">
             <div class="section-content">
                 <h2 class="section-title">Projects</h2>
                 <div class="projects-grid">
@@ -59,7 +69,7 @@
                     </article>
 
                     <article class="project-card">
-                        <h3 class="project-name">D&D Toolset</h3>
+                        <h3 class="project-name">D&amp;D Toolset</h3>
                         <div class="project-tags">
                             <span class="tag">JavaScript</span>
                             <span class="tag">Web App</span>
@@ -112,11 +122,11 @@
         </section>
 
         <!-- Contact Section -->
-        <section class="contact">
+        <section class="contact" id="contact">
             <div class="section-content">
                 <div class="contact-info">
-                    <p class="contact-line">jmarshallapplications@gmail.com</p>
-                    <p class="contact-line">437-990-0344</p>
+                    <a class="contact-line" href="mailto:jmarshallapplications@gmail.com">jmarshallapplications@gmail.com</a>
+                    <a class="contact-line" href="tel:+14379900344">437-990-0344</a>
                 </div>
             </div>
         </section>
