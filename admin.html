@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Jackson Marshall</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <!-- Background Video -->
+    <video class="bg-video" autoplay muted playsinline loop>
+        <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
+        <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
+    </video>
+
+    <!-- Content Container -->
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="page-nav">
+            <a href="index.html" class="nav-link">← Back</a>
+        </nav>
+
+        <!-- Passcode Screen -->
+        <div class="admin-container" id="passcodeScreen">
+            <section class="passcode-section">
+                <h1 class="passcode-title">Admin Access</h1>
+                <p class="passcode-subtitle">Enter passcode to continue.</p>
+                
+                <form class="passcode-form" id="passcodeForm">
+                    <input 
+                        type="password" 
+                        id="passcodeInput" 
+                        class="passcode-input" 
+                        placeholder="••••••••" 
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="passcode-button">Unlock</button>
+                </form>
+
+                <p class="passcode-error" id="passcodeError"></p>
+            </section>
+        </div>
+
+        <!-- Admin Dashboard (Hidden until passcode entered) -->
+        <div class="admin-container" id="adminDashboard" style="display: none;">
+            <section class="admin-header">
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <button class="logout-button" id="logoutButton">Logout</button>
+            </section>
+
+            <!-- Tab Navigation -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="projects">Projects</button>
+                <button class="admin-tab" data-tab="writing">Writing</button>
+                <button class="admin-tab" data-tab="gallery">Gallery</button>
+                <button class="admin-tab" data-tab="bio">Bio</button>
+                <button class="admin-tab" data-tab="links">Links</button>
+            </div>
+
+            <!-- Projects Tab -->
+            <div class="admin-tab-content active" id="projects-tab">
+                <h2>Manage Projects</h2>
+                <div class="projects-editor" id="projectsEditor"></div>
+                <button class="add-button" id="addProjectButton">+ Add Project</button>
+                <button class="save-button" id="saveProjectsButton">Save Changes</button>
+            </div>
+
+            <!-- Writing Tab -->
+            <div class="admin-tab-content" id="writing-tab">
+                <h2>Manage Writing</h2>
+                <div class="writing-editor" id="writingEditor"></div>
+                <button class="add-button" id="addArticleButton">+ Add Article</button>
+                <button class="save-button" id="saveWritingButton">Save Changes</button>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div class="admin-tab-content" id="gallery-tab">
+                <h2>Manage Gallery</h2>
+                <div class="gallery-editor" id="galleryEditor"></div>
+                <button class="save-button" id="saveGalleryButton">Save Changes</button>
+            </div>
+
+            <!-- Bio Tab -->
+            <div class="admin-tab-content" id="bio-tab">
+                <h2>Manage Bio</h2>
+                <div class="editor-item">
+                    <div class="form-group">
+                        <label>Bio Content (HTML)</label>
+                        <textarea id="bioEditor" style="min-height: 400px;"></textarea>
+                    </div>
+                </div>
+                <button class="save-button" id="saveBioButton">Save Changes</button>
+            </div>
+
+            <!-- Links Tab -->
+            <div class="admin-tab-content" id="links-tab">
+                <h2>Manage Links</h2>
+                <div class="links-editor" id="linksEditor"></div>
+                <button class="save-button" id="saveLinksButton">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

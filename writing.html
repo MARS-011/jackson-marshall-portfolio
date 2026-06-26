@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing — Jackson Marshall</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Background Video -->
+    <video class="bg-video" autoplay muted playsinline loop>
+        <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
+        <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
+    </video>
+
+    <!-- Image Banners -->
+    <div class="image-banner image-banner-left"></div>
+    <div class="image-banner image-banner-right"></div>
+
+    <!-- Content Container -->
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="page-nav">
+            <a href="index.html" class="nav-link">← Back</a>
+            <a href="admin.html" class="nav-link" style="margin-left: auto; opacity: 0.5; font-size: 0.75rem;">✎</a>
+        </nav>
+
+        <!-- Writing Header -->
+        <section class="page-header">
+            <h1 class="page-title">Writing</h1>
+            <p class="page-subtitle">Essays and reflections on engineering, systems, and design.</p>
+        </section>
+
+        <!-- Articles List -->
+        <section class="writing-container">
+            <div class="articles-list">
+                <!-- Article 1: Generative Systems -->
+                <article class="article-item" data-article-id="1">
+                    <div class="article-meta">
+                        <h3 class="article-title">Generative Systems and Emergent Complexity</h3>
+                        <p class="article-date">June 15, 2024</p>
+                    </div>
+                    <p class="article-summary">Exploring how simple rules and iterative processes create intricate patterns, from particle physics to organizational design.</p>
+                </article>
+
+                <!-- Article 2: Co-op Reflections -->
+                <article class="article-item" data-article-id="2">
+                    <div class="article-meta">
+                        <h3 class="article-title">Engineering Co-op: Lessons in Process Optimization</h3>
+                        <p class="article-date">May 28, 2024</p>
+                    </div>
+                    <p class="article-summary">Reflections from four months in industry: what academic theory doesn't teach you about real-world problem-solving and team dynamics.</p>
+                </article>
+
+                <!-- Article 3: Soap Chemistry -->
+                <article class="article-item" data-article-id="3">
+                    <div class="article-meta">
+                        <h3 class="article-title">The Chemistry of Soap: Saponification and Molecular Design</h3>
+                        <p class="article-date">April 10, 2024</p>
+                    </div>
+                    <p class="article-summary">A deep dive into the chemistry of soap production, surfactant behavior, and the surprising elegance of amphiphilic molecules.</p>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <!-- Reading View Modal -->
+    <div class="reading-view" id="readingView">
+        <div class="reading-close">×</div>
+        <article class="reading-content">
+            <h1 class="reading-title"></h1>
+            <p class="reading-date"></p>
+            <div class="reading-body"></div>
+        </article>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/writing.js"></script>
+</body>
+</html>

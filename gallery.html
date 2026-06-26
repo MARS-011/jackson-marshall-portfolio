@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — Jackson Marshall</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Background Video -->
+    <video class="bg-video" autoplay muted playsinline loop>
+        <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
+        <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
+    </video>
+
+    <!-- Image Banners -->
+    <div class="image-banner image-banner-left"></div>
+    <div class="image-banner image-banner-right"></div>
+
+    <!-- Content Container -->
+    <div class="content-wrapper">
+        <!-- Navigation -->
+        <nav class="page-nav">
+            <a href="index.html" class="nav-link">← Back</a>
+            <a href="admin.html" class="nav-link" style="margin-left: auto; opacity: 0.5; font-size: 0.75rem;">✎</a>
+        </nav>
+
+        <!-- Gallery Header -->
+        <section class="page-header">
+            <h1 class="page-title">Gallery</h1>
+            <p class="page-subtitle">3D renders and visual explorations in Blender.</p>
+        </section>
+
+        <!-- Gallery Grid -->
+        <section class="gallery-container">
+            <div class="gallery-grid">
+                <!-- Placeholder Renders -->
+                <div class="gallery-item" data-render-id="01">
+                    <div class="gallery-placeholder">[RENDER_01]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="02">
+                    <div class="gallery-placeholder">[RENDER_02]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="03">
+                    <div class="gallery-placeholder">[RENDER_03]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="04">
+                    <div class="gallery-placeholder">[RENDER_04]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="05">
+                    <div class="gallery-placeholder">[RENDER_05]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="06">
+                    <div class="gallery-placeholder">[RENDER_06]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="07">
+                    <div class="gallery-placeholder">[RENDER_07]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+
+                <div class="gallery-item" data-render-id="08">
+                    <div class="gallery-placeholder">[RENDER_08]</div>
+                    <p class="gallery-caption"></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-overlay"></div>
+        <div class="lightbox-content">
+            <button class="lightbox-close">×</button>
+            <img class="lightbox-image" src="" alt="">
+            <p class="lightbox-caption"></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/gallery.js"></script>
+</body>
+</html>

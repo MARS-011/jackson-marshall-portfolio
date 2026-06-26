@@ -17,12 +17,17 @@
         <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
     </video>
 
+    <!-- Image Banners -->
+    <div class="image-banner image-banner-left"></div>
+    <div class="image-banner image-banner-right"></div>
+
     <!-- Navigation -->
     <nav class="site-nav" aria-label="Site navigation">
         <ul class="nav-list">
-            <li><a class="nav-link" href="#about">About</a></li>
-            <li><a class="nav-link" href="#projects">Projects</a></li>
-            <li><a class="nav-link" href="#contact">Contact</a></li>
+            <li><a class="nav-link" href="projects.html">Projects</a></li>
+            <li><a class="nav-link" href="writing.html">Writing</a></li>
+            <li><a class="nav-link" href="gallery.html">Gallery</a></li>
+            <li><a class="nav-link admin-shortcut" href="admin.html" style="opacity: 0.4; font-size: 0.75rem;">✎</a></li>
         </ul>
     </nav>
 
@@ -36,8 +41,17 @@
             </div>
         </section>
 
-        <!-- About Section -->
-        <section class="about" id="about">
+        <!-- Bio Section -->
+        <section class="bio-section" id="about">
+            <div class="section-content">
+                <div class="bio-content" id="bioContent">
+                    <!-- Content loaded dynamically from data.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- About/Certs Section -->
+        <section class="about">
             <div class="section-content">
                 <p class="about-text">
                     Chemical engineer with expertise in process optimization, sustainable systems design, and technical problem-solving. Focused on applying rigorous analytical methods to real-world challenges in energy, materials, and environmental engineering. Proficient in laboratory protocols, data analysis, and cross-functional collaboration.
@@ -53,70 +67,28 @@
             </div>
         </section>
 
-        <!-- Projects Section -->
+        <!-- Projects Preview Section -->
         <section class="projects" id="projects">
             <div class="section-content">
-                <h2 class="section-title">Projects</h2>
-                <div class="projects-grid">
-                    <article class="project-card">
-                        <h3 class="project-name">Polymarket Trading Bot</h3>
-                        <div class="project-tags">
-                            <span class="tag">Python</span>
-                            <span class="tag">API Integration</span>
-                            <span class="tag">Algorithmic Trading</span>
-                        </div>
-                        <p class="project-description">Automated trading system with real-time market analysis and execution logic.</p>
-                    </article>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem;">
+                    <h2 class="section-title">Projects</h2>
+                    <a href="projects.html" class="view-all-link">View All →</a>
+                </div>
+                <div class="projects-grid" id="projectsGrid">
+                    <!-- Projects will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
 
-                    <article class="project-card">
-                        <h3 class="project-name">D&amp;D Toolset</h3>
-                        <div class="project-tags">
-                            <span class="tag">JavaScript</span>
-                            <span class="tag">Web App</span>
-                            <span class="tag">Game Design</span>
-                        </div>
-                        <p class="project-description">Comprehensive utility suite for tabletop RPG campaign management and character tracking.</p>
-                    </article>
-
-                    <article class="project-card">
-                        <h3 class="project-name">Brightspace Scraper</h3>
-                        <div class="project-tags">
-                            <span class="tag">Python</span>
-                            <span class="tag">Web Scraping</span>
-                            <span class="tag">Automation</span>
-                        </div>
-                        <p class="project-description">Automated data extraction and organization tool for learning management system content.</p>
-                    </article>
-
-                    <article class="project-card">
-                        <h3 class="project-name">ESP32 Greenhouse</h3>
-                        <div class="project-tags">
-                            <span class="tag">Embedded Systems</span>
-                            <span class="tag">IoT</span>
-                            <span class="tag">Sensors</span>
-                        </div>
-                        <p class="project-description">Smart environmental monitoring system with automated control and cloud data logging.</p>
-                    </article>
-
-                    <article class="project-card">
-                        <h3 class="project-name">Hydronic Heating Design</h3>
-                        <div class="project-tags">
-                            <span class="tag">Thermodynamics</span>
-                            <span class="tag">HVAC</span>
-                            <span class="tag">CAD</span>
-                        </div>
-                        <p class="project-description">Thermal system design and optimization for residential heating applications.</p>
-                    </article>
-
-                    <article class="project-card">
-                        <h3 class="project-name">Project Dashboard</h3>
-                        <div class="project-tags">
-                            <span class="tag">React</span>
-                            <span class="tag">Data Visualization</span>
-                            <span class="tag">Real-time Updates</span>
-                        </div>
-                        <p class="project-description">Interactive dashboard for project tracking, resource allocation, and performance metrics.</p>
-                    </article>
+        <!-- Art Preview Section -->
+        <section class="art-section">
+            <div class="section-content">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem;">
+                    <h2 class="section-title">Art & Renders</h2>
+                    <a href="gallery.html" class="view-all-link">View Gallery →</a>
+                </div>
+                <div class="art-grid" id="artGrid">
+                    <!-- Art items will be dynamically loaded here -->
                 </div>
             </div>
         </section>
@@ -125,8 +97,8 @@
         <section class="contact" id="contact">
             <div class="section-content">
                 <div class="contact-info">
-                    <a class="contact-line" href="mailto:jmarshallapplications@gmail.com">jmarshallapplications@gmail.com</a>
-                    <a class="contact-line" href="tel:+14379900344">437-990-0344</a>
+                    <a class="contact-line" id="contactEmail" href="mailto:jmarshallapplications@gmail.com">jmarshallapplications@gmail.com</a>
+                    <a class="contact-line" id="contactPhone" href="tel:+14379900344">437-990-0344</a>
                 </div>
             </div>
         </section>
@@ -136,6 +108,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

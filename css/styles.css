@@ -20,7 +20,6 @@ body {
     color: #e8ecff;
     overflow-x: hidden;
     line-height: 1.6;
-    scroll-behavior: auto;
 }
 
 /* Background Video */
@@ -36,10 +35,42 @@ body {
     pointer-events: none;
 }
 
+/* Image Banners */
+.image-banner {
+    position: fixed;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    z-index: 1;
+    opacity: 0.15;
+    pointer-events: none;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: none; /* Hidden by default, shown on desktop */
+}
+
+.image-banner-left {
+    left: 0;
+    background-image: url('../assets/images/banner_left.png');
+    background-position: left center;
+}
+
+.image-banner-right {
+    right: 0;
+    background-image: url('../assets/images/banner_right.png');
+    background-position: right center;
+}
+
+@media (min-width: 1600px) {
+    .image-banner {
+        display: block;
+    }
+}
+
 /* Content Wrapper */
 .content-wrapper {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 /* ============================================================================
@@ -60,6 +91,7 @@ body {
     list-style: none;
     margin: 0;
     padding: 0;
+    align-items: center;
 }
 
 .nav-link {
@@ -90,6 +122,17 @@ body {
 
 .nav-link:hover::after {
     width: 100%;
+}
+
+.admin-shortcut {
+    opacity: 0.3;
+    font-size: 0.7rem;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.admin-shortcut:hover {
+    opacity: 0.8;
 }
 
 /* ============================================================================
@@ -129,11 +172,8 @@ p {
    ============================================================================ */
 
 .hero {
-    /* Use 100dvh (dynamic viewport height) to account for mobile browser chrome */
     min-height: 100dvh;
-    /* Fallback for browsers that don't support dvh */
     min-height: 100vh;
-    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -143,7 +183,6 @@ p {
 
 .hero-content {
     max-width: 900px;
-    /* CSS animation removed — GSAP handles hero title/subtitle individually */
     opacity: 1;
 }
 
@@ -163,23 +202,30 @@ p {
     font-weight: 400;
 }
 
-@keyframes fadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* ============================================================================
-   ABOUT SECTION
+   BIO & ABOUT SECTIONS
    ============================================================================ */
 
+.bio-section {
+    padding: 6rem 6rem 4rem;
+}
+
+.bio-content {
+    max-width: 75ch;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: #e8ecff;
+}
+
+.bio-content p {
+    margin-bottom: 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
 .about {
-    padding: 8rem 6rem;
+    padding: 4rem 6rem 8rem;
     background: rgba(10, 14, 46, 0.3);
     backdrop-filter: blur(4px);
     border-top: 1px solid rgba(184, 197, 255, 0.1);
@@ -224,17 +270,24 @@ p {
 }
 
 /* ============================================================================
-   PROJECTS SECTION
+   PROJECTS & ART SECTIONS
    ============================================================================ */
 
-.projects {
-    padding: 8rem 6rem;
+.projects, .art-section {
+    padding: 6rem 6rem;
 }
 
-.section-title {
+.view-all-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    color: #b8c5ff;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.3s ease;
+}
+
+.view-all-link:hover {
     color: #e8ecff;
-    margin-bottom: 3rem;
-    font-size: 2.5rem;
 }
 
 .projects-grid {
@@ -249,13 +302,6 @@ p {
     border: 1px solid rgba(184, 197, 255, 0.15);
     border-radius: 2px;
     transition: border-color 0.3s ease;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.project-card.in-view {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .project-card:hover {
@@ -300,6 +346,51 @@ p {
     line-height: 1.7;
 }
 
+/* Art Grid */
+.art-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.art-item {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 1px solid rgba(184, 197, 255, 0.1);
+    background: rgba(10, 14, 46, 0.4);
+}
+
+.art-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.art-item:hover img {
+    transform: scale(1.05);
+}
+
+.art-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(10, 14, 46, 0.9), transparent);
+    color: #e8ecff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.art-item:hover .art-caption {
+    opacity: 1;
+}
+
 /* ============================================================================
    CONTACT SECTION
    ============================================================================ */
@@ -319,7 +410,6 @@ p {
     gap: 1.5rem;
 }
 
-/* Contact lines are now <a> tags — style them to match the original look */
 .contact-line {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 1.3rem;
@@ -350,210 +440,29 @@ p {
 }
 
 /* ============================================================================
-   ANIMATIONS & INTERACTIONS
-   ============================================================================ */
-
-/* Scroll-triggered fade-in for sections */
-.about,
-.projects,
-.contact {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.about.scroll-in,
-.projects.scroll-in,
-.contact.scroll-in {
-    opacity: 1;
-    transform: translateY(0);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Smooth underline on anchor links */
-a {
-    position: relative;
-    text-decoration: none;
-    color: inherit;
-}
-
-a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background-color: #b8c5ff;
-    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-a:hover::after {
-    width: 100%;
-}
-
-/* ============================================================================
    RESPONSIVE DESIGN
    ============================================================================ */
 
 @media (max-width: 1024px) {
-    .hero {
-        padding: 3rem 4rem;
-    }
-
-    .hero-title {
-        font-size: 4rem;
-    }
-
-    .about,
-    .projects,
-    .contact {
-        padding: 6rem 4rem;
-    }
-
-    .projects-grid {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
-    }
+    .hero { padding: 3rem 4rem; }
+    .hero-title { font-size: 4rem; }
+    .bio-section, .about, .projects, .art-section, .contact { padding: 6rem 4rem; }
+    .projects-grid { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
 }
 
 @media (max-width: 768px) {
-    .site-nav {
-        padding: 1rem 1.5rem;
-    }
-
-    .nav-list {
-        gap: 1.25rem;
-    }
-
-    .nav-link {
-        font-size: 0.75rem;
-    }
-
-    .hero {
-        padding: 2rem;
-        min-height: 80vh;
-        min-height: 80dvh;
-    }
-
-    .hero-title {
-        font-size: 2.8rem;
-    }
-
-    .hero-subtitle {
-        font-size: 0.95rem;
-    }
-
-    .about,
-    .projects,
-    .contact {
-        padding: 4rem 2rem;
-    }
-
-    .section-title {
-        font-size: 2rem;
-    }
-
-    .about-text {
-        font-size: 1rem;
-    }
-
-    .project-card {
-        padding: 1.5rem;
-    }
-
-    .project-name {
-        font-size: 1.2rem;
-    }
-
-    .certifications {
-        gap: 0.75rem;
-    }
-
-    .cert-badge {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-    }
-
-    .projects-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .contact-line {
-        font-size: 1.1rem;
-    }
+    .site-nav { padding: 1rem 1.5rem; }
+    .nav-list { gap: 1.25rem; }
+    .nav-link { font-size: 0.75rem; }
+    .hero { padding: 2rem; min-height: 80dvh; }
+    .hero-title { font-size: 2.8rem; }
+    .bio-section, .about, .projects, .art-section, .contact { padding: 4rem 2rem; }
+    .section-title { font-size: 2rem; }
+    .projects-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
-    body {
-        font-size: 14px;
-    }
-
-    .site-nav {
-        padding: 0.75rem 1rem;
-    }
-
-    .nav-list {
-        gap: 1rem;
-    }
-
-    .hero {
-        padding: 1.5rem;
-        min-height: 70vh;
-        min-height: 70dvh;
-    }
-
-    .hero-title {
-        font-size: 2rem;
-    }
-
-    .hero-subtitle {
-        font-size: 0.85rem;
-    }
-
-    .about,
-    .projects,
-    .contact {
-        padding: 3rem 1.5rem;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .about-text {
-        font-size: 0.95rem;
-    }
-
-    .project-card {
-        padding: 1.2rem;
-    }
-
-    .project-name {
-        font-size: 1rem;
-    }
-
-    .project-description {
-        font-size: 0.9rem;
-    }
-
-    .contact-line {
-        font-size: 1rem;
-    }
-}
-
-/* ============================================================================
-   REDUCED MOTION ACCESSIBILITY
-   ============================================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-
-    html {
-        scroll-behavior: auto;
-    }
+    .hero-title { font-size: 2rem; }
+    .section-title { font-size: 1.5rem; }
+    .contact-line { font-size: 1rem; }
 }
