@@ -8,6 +8,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!document.querySelector(".ascii-border-left")) {
+                const leftBorder = document.createElement("div");
+                leftBorder.className = "ascii-border-left";
+                const rightBorder = document.createElement("div");
+                rightBorder.className = "ascii-border-right";
+                document.body.insertBefore(leftBorder, document.body.firstChild);
+                document.body.insertBefore(rightBorder, document.body.firstChild);
+            }
+        });
+    </script>
 </head>
 <body>
     <!-- Background Video -->

@@ -21,6 +21,10 @@
     <div class="image-banner image-banner-left"></div>
     <div class="image-banner image-banner-right"></div>
 
+    <!-- ASCII Art Borders -->
+    <div class="ascii-border-left"></div>
+    <div class="ascii-border-right"></div>
+
     <!-- Navigation -->
     <nav class="site-nav" aria-label="Site navigation">
         <ul class="nav-list">
@@ -110,5 +114,16 @@
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        // Apply ASCII borders to all pages
+        if (!document.querySelector('.ascii-border-left')) {
+            const leftBorder = document.createElement('div');
+            leftBorder.className = 'ascii-border-left';
+            const rightBorder = document.createElement('div');
+            rightBorder.className = 'ascii-border-right';
+            document.body.insertBefore(leftBorder, document.body.firstChild);
+            document.body.insertBefore(rightBorder, document.body.firstChild);
+        }
+    </script>
 </body>
 </html>
