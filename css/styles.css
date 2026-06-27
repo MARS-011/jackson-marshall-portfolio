@@ -81,7 +81,7 @@ body {
     background-size: auto;
     background-attachment: fixed;
     overflow: hidden;
-    width: 140px;
+    width: auto;
 }
 
 .ascii-border-left {
