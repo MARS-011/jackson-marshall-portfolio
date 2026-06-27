@@ -72,15 +72,16 @@ body {
 .ascii-border-right {
     position: fixed;
     top: 0;
-    width: 120px;
+    width: 140px;
     height: 100vh;
     z-index: 1;
     opacity: 0.5;
     pointer-events: none;
     background-image: url('../assets/images/ascii-border.png');
     background-repeat: repeat-y;
-    background-size: auto 100%;
+    background-size: contain;
     background-attachment: fixed;
+    overflow: hidden;
 }
 
 .ascii-border-left {
