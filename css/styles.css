@@ -73,15 +73,15 @@ body {
     position: fixed;
     top: 0;
     height: 100vh;
-    z-index: 10;
+    z-index: 9999; /* Ensure it is on top of everything, including the video */
     opacity: 1;
     pointer-events: none;
     background-image: url('../assets/images/ascii-border-white.png');
     background-repeat: repeat-y;
-    background-size: auto;
+    background-size: contain;
     background-attachment: fixed;
     overflow: hidden;
-    width: auto;
+    width: 140px; /* Fixed width to ensure visibility */
 }
 
 .ascii-border-left {
