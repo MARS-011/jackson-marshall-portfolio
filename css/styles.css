@@ -41,7 +41,7 @@ body {
     top: 0;
     width: 300px;
     height: 100%;
-    z-index: 1;
+    z-index: 0;
     opacity: 0.15;
     pointer-events: none;
     background-size: contain;
@@ -63,7 +63,7 @@ body {
 
 @media (min-width: 1600px) {
     .image-banner {
-        display: block;
+        display: none; /* Disabled to avoid overlap with ASCII borders */
     }
 }
 
@@ -72,16 +72,16 @@ body {
 .ascii-border-right {
     position: fixed;
     top: 0;
-    width: 140px;
     height: 100vh;
-    z-index: 1;
+    z-index: 10;
     opacity: 1;
     pointer-events: none;
     background-image: url('../assets/images/ascii-border-white.png');
     background-repeat: repeat-y;
-    background-size: contain;
+    background-size: auto;
     background-attachment: fixed;
     overflow: hidden;
+    width: 140px;
 }
 
 .ascii-border-left {
