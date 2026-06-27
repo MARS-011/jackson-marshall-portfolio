@@ -1,6 +1,6 @@
 /* ============================================================================
    GALLERY PAGE — JAVASCRIPT
-   Dynamic loading, grid layout, lightbox, Lenis smooth scroll
+   Dynamic loading, grid layout, lightbox, Lenis smooth scroll 
    ============================================================================ */
 
 gsap.registerPlugin(ScrollTrigger);
