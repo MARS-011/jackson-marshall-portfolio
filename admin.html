@@ -71,6 +71,7 @@
                 <button class="admin-tab" data-tab="gallery">Gallery</button>
                 <button class="admin-tab" data-tab="bio">Bio</button>
                 <button class="admin-tab" data-tab="links">Links</button>
+                <button class="admin-tab" data-tab="images">Images</button>
             </div>
 
             <!-- Projects Tab -->
@@ -114,6 +115,49 @@
                 <div class="links-editor" id="linksEditor"></div>
                 <button class="save-button" id="saveLinksButton">Save Changes</button>
             </div>
+
+            <!-- Images Tab -->
+            <div class="admin-tab-content" id="images-tab">
+                <h2>Manage Images & Layout</h2>
+                <div class="images-editor">
+                    <div class="editor-item">
+                        <h3>ASCII Border (Left & Right)</h3>
+                        <p style="font-size: 0.85rem; color: #a8b5ff; margin-bottom: 1rem;">Upload a new ASCII art border image (PNG, recommended transparent background)</p>
+                        <input type="file" id="asciiBorderUpload" accept="image/png,image/jpeg" class="file-input">
+                        <button class="save-button" id="updateAsciiBorderButton" style="margin-top: 0.5rem;">Update Border</button>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid rgba(184, 197, 255, 0.15); margin: 2rem 0;">
+                    <div class="editor-item">
+                        <h3>Banner Images</h3>
+                        <p style="font-size: 0.85rem; color: #a8b5ff; margin-bottom: 1rem;">Upload new banner images for desktop view</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem;">Left Banner</label>
+                                <input type="file" id="bannerLeftUpload" accept="image/*" class="file-input">
+                                <button class="save-button" id="updateBannerLeftButton" style="margin-top: 0.5rem;">Update</button>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem;">Right Banner</label>
+                                <input type="file" id="bannerRightUpload" accept="image/*" class="file-input">
+                                <button class="save-button" id="updateBannerRightButton" style="margin-top: 0.5rem;">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border: none; border-top: 1px solid rgba(184, 197, 255, 0.15); margin: 2rem 0;">
+                    <div class="editor-item">
+                        <h3>Layout Settings</h3>
+                        <div class="form-group">
+                            <label>ASCII Border Width (px)</label>
+                            <input type="number" id="borderWidthInput" min="80" max="200" value="140" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ASCII Border Opacity (0-1)</label>
+                            <input type="number" id="borderOpacityInput" min="0" max="1" step="0.1" value="1" class="form-input">
+                        </div>
+                        <button class="save-button" id="saveLayoutButton">Save Layout Settings</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -123,5 +167,6 @@
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
     <script src="js/data.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/admin-images.js"></script>
 </body>
 </html>
