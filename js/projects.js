@@ -92,11 +92,12 @@ function initializeCardAnimations() {
 
         card.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') return;
-
-            const isFlipped = card.classList.contains('flipped');
-            // Close all others
-            cards.forEach(c => c !== card && c.classList.remove('flipped'));
-            card.classList.toggle('flipped', !isFlipped);
+            
+            const projectId = parseInt(card.getAttribute('data-id'));
+            const project = projects.find(p => p.id === projectId);
+            if (project) {
+                openProjectDetail(project);
+            }
         });
 
         card.addEventListener('mouseenter', () => {
@@ -127,8 +128,93 @@ if (bgVideo) {
    INITIALIZATION
    ============================================================================ */
 
+const overlay = document.getElementById('projectDetailOverlay');
+const detailContent = document.getElementById('detailContent');
+const closeBtn = document.getElementById('closeDetail');
+
+function openProjectDetail(project) {
+    // Populate content
+    detailContent.innerHTML = `
+        <header class="detail-header">
+            <h1 class="page-title">${project.name}</h1>
+            <div class="detail-tags">
+                ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
+        </header>
+
+        <div class="detail-body">
+            <p class="detail-description">${project.fullDescription}</p>
+        </div>
+
+        ${project.photos && project.photos.length > 0 ? `
+            <div class="detail-photos-large">
+                ${project.photos.map(photo => `
+                    <div class="detail-photo-item">
+                        <img src="${photo}" alt="${project.name}">
+                    </div>
+                `).join('')}
+            </div>
+        ` : ''}
+
+        <div class="detail-links-section">
+            <h4 class="section-label">Project Assets & Links</h4>
+            <div class="detail-links-grid">
+                <a href="${project.github}" class="detail-link-card" target="_blank">
+                    <span class="link-label">Source Code</span>
+                    <span class="link-url">GitHub Repository →</span>
+                </a>
+                ${(project.links || []).map(link => `
+                    <a href="${link.url}" class="detail-link-card" target="_blank">
+                        <span class="link-label">External Resource</span>
+                        <span class="link-url">${link.label} →</span>
+                    </a>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    // Show overlay
+    overlay.style.display = 'block';
+    gsap.to(overlay, { opacity: 1, duration: 0.5, ease: 'power2.out' });
+    
+    // Disable body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProjectDetail() {
+    gsap.to(overlay, { 
+        opacity: 0, 
+        duration: 0.4, 
+        ease: 'power2.in',
+        onComplete: () => {
+            overlay.style.display = 'none';
+            detailContent.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+closeBtn.addEventListener('click', closeProjectDetail);
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.style.display === 'block') {
+        closeProjectDetail();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     initializeCardAnimations();
+    
+    // Check for project ID in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+    if (projectId) {
+        const project = projects.find(p => p.id === parseInt(projectId));
+        if (project) {
+            setTimeout(() => openProjectDetail(project), 500);
+        }
+    }
 
     const pageTitle    = document.querySelector('.page-title');
     const pageSubtitle = document.querySelector('.page-subtitle');
