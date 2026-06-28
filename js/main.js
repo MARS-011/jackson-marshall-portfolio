@@ -67,6 +67,11 @@ function loadDynamicContent() {
                     ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
                 </div>
                 <p class="project-description">${project.description}</p>
+                ${project.links && project.links.length > 0 ? `
+                    <div class="project-links-preview" style="margin-top: 1rem; display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                        ${project.links.map(link => `<a href="${link.url}" class="project-link" style="font-size: 0.75rem; opacity: 0.6; text-decoration: none; color: #b8c5ff; font-family: 'IBM Plex Mono', monospace;" target="_blank">${link.label} →</a>`).join('')}
+                    </div>
+                ` : ''}
             </article>
         `).join('');
     }

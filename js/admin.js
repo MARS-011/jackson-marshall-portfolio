@@ -156,12 +156,22 @@ function renderProjectsEditor() {
                 <input type="url" value="${project.github}" onchange="updateProjectField(${project.id}, 'github', this.value)">
             </div>
             
-            <div class="form-group">
-                <label>Tech Stack (comma-separated)</label>
-                <input type="text" value="${project.stack.join(', ')}" onchange="updateProjectField(${project.id}, 'stack', this.value.split(',').map(s => s.trim()))">
-            </div>
-        </div>
-    `).join('');
+	            <div class="form-group">
+	                <label>Tech Stack (comma-separated)</label>
+	                <input type="text" value="${project.stack.join(', ')}" onchange="updateProjectField(${project.id}, 'stack', this.value.split(',').map(s => s.trim()))">
+	            </div>
+
+                <div class="form-group">
+                    <label>External Links (format: Label|URL, comma-separated)</label>
+                    <input type="text" value="${(project.links || []).map(l => `${l.label}|${l.url}`).join(', ')}" onchange="updateProjectField(${project.id}, 'links', this.value.split(',').filter(s => s.trim()).map(s => { const [label, url] = s.split('|'); return { label: label?.trim(), url: url?.trim() }; }))">
+                </div>
+
+                <div class="form-group">
+                    <label>Photos (URLs, comma-separated)</label>
+                    <input type="text" value="${(project.photos || []).join(', ')}" onchange="updateProjectField(${project.id}, 'photos', this.value.split(',').map(s => s.trim()).filter(s => s))">
+                </div>
+	        </div>
+	    `).join('');
 }
 
 function updateProjectField(id, field, value) {
@@ -176,13 +186,15 @@ function deleteProject(id) {
 }
 
 document.getElementById('addProjectButton')?.addEventListener('click', () => {
-    const newProject = {
-        name: 'New Project',
-        description: 'Project description',
-        fullDescription: 'Full project description',
-        stack: ['Tech1', 'Tech2'],
-        github: 'https://github.com'
-    };
+	    const newProject = {
+	        name: 'New Project',
+	        description: 'Project description',
+	        fullDescription: 'Full project description',
+	        stack: ['Tech1', 'Tech2'],
+	        github: 'https://github.com',
+            links: [],
+            photos: []
+	    };
     DataManager.addProject(newProject);
     renderProjectsEditor();
 });

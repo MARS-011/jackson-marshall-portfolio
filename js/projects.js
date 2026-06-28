@@ -30,6 +30,50 @@ if (!prefersReducedMotion && !isMobile) {
    ============================================================================ */
 
 function initializeCardAnimations() {
+    const projectsGrid = document.querySelector('.projects-grid');
+    const projects = DataManager.getProjects();
+
+    if (projectsGrid) {
+        projectsGrid.innerHTML = projects.map(project => `
+            <div class="project-card-expandable" data-id="${project.id}">
+                <div class="card-front">
+                    <h3 class="card-title">${project.name}</h3>
+                    <p class="card-description">${project.description}</p>
+                    <div class="card-tags">
+                        ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+                <div class="card-back">
+                    <h3 class="card-title">${project.name}</h3>
+                    <p class="card-full-description">${project.fullDescription}</p>
+                    <div class="card-tags">
+                        ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    
+                    ${project.links && project.links.length > 0 ? `
+                        <div class="project-links">
+                            <h4 class="section-label">Links</h4>
+                            <div class="links-list">
+                                ${project.links.map(link => `<a href="${link.url}" class="project-link" target="_blank">${link.label} →</a>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${project.photos && project.photos.length > 0 ? `
+                        <div class="project-photos">
+                            <h4 class="section-label">Photos</h4>
+                            <div class="photos-grid">
+                                ${project.photos.map(photo => `<img src="${photo}" alt="${project.name}" class="project-photo">`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <a href="${project.github}" class="github-link" target="_blank">View on GitHub →</a>
+                </div>
+            </div>
+        `).join('');
+    }
+
     const cards = document.querySelectorAll('.project-card-expandable');
 
     cards.forEach((card, index) => {

@@ -592,6 +592,55 @@ p {
     border-bottom-color: rgba(184, 197, 255, 0.6);
 }
 
+.section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #5a6490;
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+.links-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.project-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    color: #b8c5ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.project-link:hover {
+    color: #e8ecff;
+}
+
+.photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.project-photo {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: 1px solid rgba(184, 197, 255, 0.1);
+    border-radius: 2px;
+    transition: border-color 0.3s ease;
+}
+
+.project-photo:hover {
+    border-color: rgba(184, 197, 255, 0.4);
+}
+
 /* ============================================================================
    WRITING PAGE
    ============================================================================ */

@@ -15,7 +15,9 @@ const DataManager = (() => {
                 description: 'Algorithmic trading bot for prediction markets with real-time data ingestion.',
                 fullDescription: 'A sophisticated trading bot that analyzes market conditions and executes trades on Polymarket. Features include real-time data processing, risk management, and performance analytics.',
                 stack: ['Python', 'APIs', 'Machine Learning'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             },
             {
                 id: 2,
@@ -23,7 +25,9 @@ const DataManager = (() => {
                 description: 'Web-based tools for Dungeons & Dragons campaign management and character creation.',
                 fullDescription: 'Comprehensive toolset for D&D players and dungeon masters. Includes character builders, spell databases, encounter generators, and campaign tracking features.',
                 stack: ['React', 'JavaScript', 'Firebase'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             },
             {
                 id: 3,
@@ -31,7 +35,9 @@ const DataManager = (() => {
                 description: 'Automated tool for extracting course materials and grades from Brightspace LMS.',
                 fullDescription: 'Efficient scraper that automates the collection of course materials, grades, and announcements from Brightspace. Supports batch operations and data export.',
                 stack: ['Python', 'Selenium', 'Data Processing'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             },
             {
                 id: 4,
@@ -39,7 +45,9 @@ const DataManager = (() => {
                 description: 'IoT greenhouse monitoring system with automated climate control.',
                 fullDescription: 'Complete IoT solution for greenhouse management. Features real-time sensor monitoring, automated watering, climate control, and mobile app integration.',
                 stack: ['ESP32', 'C++', 'IoT', 'Mobile'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             },
             {
                 id: 5,
@@ -47,7 +55,9 @@ const DataManager = (() => {
                 description: 'CAD and simulation tools for designing efficient hydronic heating systems.',
                 fullDescription: 'Professional-grade design suite for hydronic heating systems. Includes thermal modeling, pipe sizing calculations, and system optimization algorithms.',
                 stack: ['CAD', 'Python', 'Thermodynamics'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             },
             {
                 id: 6,
@@ -55,7 +65,9 @@ const DataManager = (() => {
                 description: 'Real-time project management dashboard with team collaboration features.',
                 fullDescription: 'Collaborative project management platform with real-time updates, task tracking, team communication, and progress visualization.',
                 stack: ['React', 'Node.js', 'MongoDB'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             },
             {
                 id: 7,
@@ -63,7 +75,9 @@ const DataManager = (() => {
                 description: 'Procedural particle system creating orbital structures and cosmic visualizations.',
                 fullDescription: 'Generative art project exploring emergent complexity through particle physics. Creates mesmerizing orbital patterns with mathematical precision.',
                 stack: ['Three.js', 'JavaScript', 'WebGL'],
-                github: 'https://github.com/jmarshall'
+                github: 'https://github.com/jmarshall',
+                links: [],
+                photos: []
             }
         ],
         writing: [
