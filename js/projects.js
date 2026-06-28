@@ -61,9 +61,14 @@ function initializeCardAnimations() {
 
                     ${project.photos && project.photos.length > 0 ? `
                         <div class="project-photos">
-                            <h4 class="section-label">Photos</h4>
-                            <div class="photos-grid">
-                                ${project.photos.map(photo => `<img src="${photo}" alt="${project.name}" class="project-photo">`).join('')}
+                            <h4 class="section-label">Photos (${project.photos.length})</h4>
+                            <div class="photos-slider-container">
+                                <div class="photos-slider">
+                                    ${project.photos.map(photo => `<img src="${photo}" alt="${project.name}" class="project-photo-slide">`).join('')}
+                                </div>
+                                ${project.photos.length > 1 ? `
+                                    <div class="slider-hint">Scroll for more →</div>
+                                ` : ''}
                             </div>
                         </div>
                     ` : ''}

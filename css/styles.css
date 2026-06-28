@@ -621,24 +621,47 @@ p {
     color: #e8ecff;
 }
 
-.photos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.5rem;
+.photos-slider-container {
+    position: relative;
     margin-bottom: 1.5rem;
 }
 
-.project-photo {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border: 1px solid rgba(184, 197, 255, 0.1);
-    border-radius: 2px;
-    transition: border-color 0.3s ease;
+.photos-slider {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE/Edge */
+    padding-bottom: 0.5rem;
 }
 
-.project-photo:hover {
+.photos-slider::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.project-photo-slide {
+    flex: 0 0 180px;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border: 1px solid rgba(184, 197, 255, 0.15);
+    border-radius: 2px;
+    scroll-snap-align: start;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.project-photo-slide:hover {
     border-color: rgba(184, 197, 255, 0.4);
+    transform: scale(1.02);
+}
+
+.slider-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: #5a6490;
+    text-align: right;
+    margin-top: 0.25rem;
+    opacity: 0.6;
 }
 
 /* ============================================================================

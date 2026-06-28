@@ -168,7 +168,13 @@ function renderProjectsEditor() {
 
                 <div class="form-group">
                     <label>Photos (URLs, comma-separated)</label>
-                    <input type="text" value="${(project.photos || []).join(', ')}" onchange="updateProjectField(${project.id}, 'photos', this.value.split(',').map(s => s.trim()).filter(s => s))">
+                    <input type="text" id="photoUrls-${project.id}" value="${(project.photos || []).join(', ')}" onchange="updateProjectField(${project.id}, 'photos', this.value.split(',').map(s => s.trim()).filter(s => s))">
+                </div>
+                
+                <div class="form-group">
+                    <label>Upload Photos (Add to existing)</label>
+                    <input type="file" multiple accept="image/*" onchange="handlePhotoUpload(${project.id}, this)">
+                    <p class="form-hint" style="font-size: 0.7rem; color: #5a6490; margin-top: 0.25rem;">Files are converted to Base64 and stored locally.</p>
                 </div>
 	        </div>
 	    `).join('');
@@ -176,6 +182,45 @@ function renderProjectsEditor() {
 
 function updateProjectField(id, field, value) {
     DataManager.updateProject(id, { [field]: value });
+}
+
+async function handlePhotoUpload(projectId, input) {
+    const files = Array.from(input.files);
+    if (files.length === 0) return;
+
+    const projects = DataManager.getProjects();
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const newPhotos = [...(project.photos || [])];
+
+    for (const file of files) {
+        try {
+            const base64 = await convertToBase64(file);
+            newPhotos.push(base64);
+        } catch (error) {
+            console.error('Error converting file:', error);
+        }
+    }
+
+    DataManager.updateProject(projectId, { photos: newPhotos });
+    
+    // Update the UI input field and re-render
+    const urlInput = document.getElementById(`photoUrls-${projectId}`);
+    if (urlInput) {
+        urlInput.value = newPhotos.join(', ');
+    }
+    
+    renderProjectsEditor();
+}
+
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
 }
 
 function deleteProject(id) {
