@@ -142,7 +142,8 @@ if (bgVideo) {
    INITIALIZATION
    ============================================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await DataManager.initialize();
     renderArticles();
 
     const pageTitle    = document.querySelector('.page-title');

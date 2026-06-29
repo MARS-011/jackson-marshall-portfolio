@@ -115,6 +115,12 @@
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await DataManager.initialize();
+            if (typeof loadDynamicContent === 'function') loadDynamicContent();
+        });
+    </script>
+    <script>
         // Apply ASCII borders to all pages
         if (!document.querySelector('.ascii-border-left')) {
             const leftBorder = document.createElement('div');

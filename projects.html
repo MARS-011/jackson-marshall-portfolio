@@ -245,5 +245,11 @@
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
     <script src="js/data.js"></script>
     <script src="js/projects.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await DataManager.initialize();
+            if (typeof initializeCardAnimations === 'function') initializeCardAnimations();
+        });
+    </script>
 </body>
 </html>

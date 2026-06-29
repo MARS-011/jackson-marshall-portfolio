@@ -165,7 +165,8 @@ if (bgVideo) {
    INITIALIZATION
    ============================================================================ */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await DataManager.initialize();
     renderGallery();
 
     const pageTitle    = document.querySelector('.page-title');

@@ -427,17 +427,67 @@ document.getElementById('saveLinksButton')?.addEventListener('click', () => {
 });
 
 // ============================================================================
+// PUBLISHING
+// ============================================================================
+
+const publishButton = document.getElementById('publishButton');
+const publishStatus = document.getElementById('publishStatus');
+const githubTokenInput = document.getElementById('githubToken');
+
+// Replace this with your actual PAT in the browser, but NEVER commit it!
+const GITHUB_TOKEN = ""; 
+
+if (publishButton) {
+    publishButton.addEventListener('click', async () => {
+        const token = githubTokenInput.value.trim() || GITHUB_TOKEN;
+        if (!token) {
+            alert('Please enter your GitHub Personal Access Token first.');
+            githubTokenInput.focus();
+            return;
+        }
+
+        publishButton.disabled = true;
+        publishButton.textContent = 'PUBLISHING...';
+        publishStatus.textContent = 'Connecting to GitHub...';
+        publishStatus.style.color = '#b8c5ff';
+
+        try {
+            const repoOwner = 'MARS-011';
+            const repoName = 'jackson-marshall-portfolio';
+            
+            await DataManager.publishToGitHub(token, repoOwner, repoName);
+            
+            publishStatus.textContent = 'SUCCESS: Content published to GitHub! Site will rebuild in 1-2 minutes.';
+            publishStatus.style.color = '#4ade80';
+            alert('Changes published successfully! GitHub Pages will rebuild automatically.');
+        } catch (error) {
+            publishStatus.textContent = `ERROR: ${error.message}`;
+            publishStatus.style.color = '#f87171';
+            alert(`Publish failed: ${error.message}`);
+        } finally {
+            publishButton.disabled = false;
+            publishButton.textContent = 'PUBLISH TO GITHUB';
+        }
+    });
+}
+
+// ============================================================================
 // INITIALIZATION
 // ============================================================================
 
-// Check session on page load
-if (isSessionValid()) {
-    showDashboard();
-} else {
-    passcodeScreen.style.display = 'block';
-    adminDashboard.style.display = 'none';
-    passcodeInput.focus();
-}
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize DataManager
+    await DataManager.initialize();
+
+    // Check session on page load
+    if (isSessionValid()) {
+        showDashboard();
+    } else {
+        passcodeScreen.style.display = 'block';
+        adminDashboard.style.display = 'none';
+        passcodeInput.focus();
+    }
+});
 
 // Prevent back button after logout
 window.addEventListener('popstate', () => {

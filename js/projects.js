@@ -203,7 +203,8 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await DataManager.initialize();
     initializeCardAnimations();
     
     // Check for project ID in URL

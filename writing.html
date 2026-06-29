@@ -95,5 +95,11 @@
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
     <script src="js/data.js"></script>
     <script src="js/writing.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await DataManager.initialize();
+            if (typeof renderWriting === 'function') renderWriting();
+        });
+    </script>
 </body>
 </html>
