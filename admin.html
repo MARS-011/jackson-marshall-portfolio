@@ -70,14 +70,25 @@
                 </div>
             </section>
             
-            <section class="admin-config" style="margin-bottom: 2rem; padding: 1.5rem; border: 1px solid rgba(184, 197, 255, 0.2); background: rgba(184, 197, 255, 0.05);">
-                <h3 style="margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">GitHub Configuration</h3>
-                <div class="form-group">
-                    <label>GitHub Personal Access Token (PAT)</label>
-                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" style="width: 100%; background: rgba(10, 14, 46, 0.8); border: 1px solid rgba(184, 197, 255, 0.3); color: #e8ecff; padding: 0.8rem; font-family: 'IBM Plex Mono', monospace;">
-                    <p style="font-size: 0.7rem; color: #5a6490; margin-top: 0.5rem;">Token is stored in memory for this session only. Do not commit it.</p>
-                </div>
-            </section>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <section class="admin-config" style="padding: 1.5rem; border: 1px solid rgba(184, 197, 255, 0.2); background: rgba(184, 197, 255, 0.05);">
+                    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">GitHub Configuration</h3>
+                    <div class="form-group">
+                        <label>GitHub Personal Access Token (PAT)</label>
+                        <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" style="width: 100%; background: rgba(10, 14, 46, 0.8); border: 1px solid rgba(184, 197, 255, 0.3); color: #e8ecff; padding: 0.8rem; font-family: 'IBM Plex Mono', monospace;">
+                        <p style="font-size: 0.7rem; color: #5a6490; margin-top: 0.5rem;">Token is stored in memory for this session only. Do not commit it.</p>
+                    </div>
+                </section>
+
+                <section class="admin-config" style="padding: 1.5rem; border: 1px solid rgba(184, 197, 255, 0.2); background: rgba(184, 197, 255, 0.05);">
+                    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Data Import (Recovery)</h3>
+                    <div class="form-group">
+                        <label>Paste Recovery JSON</label>
+                        <textarea id="importDataInput" placeholder='{"projects": [...], ...}' style="width: 100%; height: 60px; background: rgba(10, 14, 46, 0.8); border: 1px solid rgba(184, 197, 255, 0.3); color: #e8ecff; padding: 0.5rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;"></textarea>
+                        <button id="importDataBtn" class="save-button" style="margin-top: 0.5rem; font-size: 0.7rem; padding: 0.4rem 1rem;">Import Data</button>
+                    </div>
+                </section>
+            </div>
 
             <!-- Tab Navigation -->
             <div class="admin-tabs">

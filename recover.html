@@ -22,6 +22,8 @@
             color: #b8c5ff;
             margin: 1rem 0;
             border: 1px solid rgba(184, 197, 255, 0.1);
+            white-space: pre-wrap;
+            word-break: break-all;
         }
         .btn {
             background: #b8c5ff;
@@ -32,8 +34,19 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.8rem;
         }
+        .btn:hover { background: #e8ecff; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .alert-success { background: rgba(74, 222, 128, 0.1); border: 1px solid #4ade80; color: #4ade80; }
+        .alert-error { background: rgba(248, 113, 113, 0.1); border: 1px solid #f87171; color: #f87171; }
     </style>
 </head>
 <body>
@@ -44,15 +57,29 @@
 
         <section class="page-header">
             <h1 class="page-title">Data Recovery</h1>
-            <p class="page-subtitle">This tool will check your browser for data saved before the recent update.</p>
+            <p class="page-subtitle">Recover content saved before the GitHub migration.</p>
         </section>
 
         <div class="recovery-box">
+            <div id="alertBox" style="display: none;"></div>
+            
             <div id="status">Checking for old data...</div>
-            <div id="preview" class="data-preview" style="display: none;"></div>
-            <div id="actions" style="display: none; margin-top: 1rem; display: flex; gap: 1rem;">
-                <button id="migrateBtn" class="btn">Migrate to New System</button>
-                <button id="downloadBtn" class="btn" style="background: transparent; border: 1px solid #b8c5ff; color: #b8c5ff;">Download Backup</button>
+            
+            <div id="dataSection" style="display: none;">
+                <p style="margin-top: 1rem; color: #a8b5ff;">Found your previous content! You can either migrate it automatically or copy it manually.</p>
+                <div id="preview" class="data-preview"></div>
+                
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                    <button id="migrateBtn" class="btn">1. Auto-Migrate to Admin</button>
+                    <button id="copyBtn" class="btn" style="background: transparent; border: 1px solid #b8c5ff; color: #b8c5ff;">2. Copy to Clipboard</button>
+                    <button id="downloadBtn" class="btn" style="background: transparent; border: 1px solid #b8c5ff; color: #b8c5ff;">3. Download JSON</button>
+                </div>
+                
+                <div style="margin-top: 2rem; border-top: 1px solid rgba(184, 197, 255, 0.1); padding-top: 1rem;">
+                    <p style="font-size: 0.8rem; color: #5a6490;">
+                        <strong>Manual Fix:</strong> If the button above doesn't work, click "Copy to Clipboard" and paste the data back to me in our chat. I can then push it to GitHub for you directly.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -62,24 +89,46 @@
         const NEW_KEY = 'jackson_portfolio_data_draft';
 
         const statusEl = document.getElementById('status');
+        const dataSection = document.getElementById('dataSection');
         const previewEl = document.getElementById('preview');
-        const actionsEl = document.getElementById('actions');
+        const alertBox = document.getElementById('alertBox');
+        
         const migrateBtn = document.getElementById('migrateBtn');
+        const copyBtn = document.getElementById('copyBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+
+        function showAlert(msg, type) {
+            alertBox.textContent = msg;
+            alertBox.className = 'alert alert-' + type;
+            alertBox.style.display = 'block';
+            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
+        }
 
         const oldDataRaw = localStorage.getItem(OLD_KEY);
 
         if (oldDataRaw) {
-            const oldData = JSON.parse(oldDataRaw);
-            statusEl.innerHTML = '<span style="color: #4ade80;">✓ Found old data!</span> Review it below:';
-            previewEl.textContent = JSON.stringify(oldData, null, 4);
-            previewEl.style.display = 'block';
-            actionsEl.style.display = 'flex';
+            statusEl.style.display = 'none';
+            dataSection.style.display = 'block';
+            previewEl.textContent = oldDataRaw;
 
             migrateBtn.onclick = () => {
-                localStorage.setItem(NEW_KEY, oldDataRaw);
-                alert('Success! Your old data has been moved to the new draft system. Go to the Admin panel to Publish it to GitHub.');
-                window.location.href = 'admin.html';
+                try {
+                    // Test if it's valid JSON
+                    JSON.parse(oldDataRaw);
+                    localStorage.setItem(NEW_KEY, oldDataRaw);
+                    showAlert('Success! Data moved to draft. Redirecting to Admin...', 'success');
+                    setTimeout(() => { window.location.href = 'admin.html'; }, 2000);
+                } catch (e) {
+                    showAlert('Error: The saved data is corrupted.', 'error');
+                }
+            };
+
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(oldDataRaw).then(() => {
+                    showAlert('Copied to clipboard!', 'success');
+                }).catch(err => {
+                    showAlert('Failed to copy. Please select the text in the box and copy manually.', 'error');
+                });
             };
 
             downloadBtn.onclick = () => {
@@ -87,11 +136,13 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'portfolio_backup.json';
+                a.download = 'portfolio_recovery_data.json';
                 a.click();
             };
         } else {
-            statusEl.innerHTML = '<span style="color: #f87171;">✗ No old data found in this browser.</span><br><br>If you wrote your content on a different computer or browser, you will need to open this recovery page on that specific device.';
+            statusEl.innerHTML = '<span style="color: #f87171;">✗ No old data found in this browser.</span><br><br>' +
+                'Make sure you are on the same device and browser you used previously.<br><br>' +
+                'If you have a backup file, you can also send it to me in the chat.';
         }
     </script>
 </body>

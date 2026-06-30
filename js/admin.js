@@ -471,6 +471,31 @@ if (publishButton) {
     });
 }
 
+const importDataBtn = document.getElementById('importDataBtn');
+const importDataInput = document.getElementById('importDataInput');
+
+if (importDataBtn) {
+    importDataBtn.addEventListener('click', () => {
+        const raw = importDataInput.value.trim();
+        if (!raw) return;
+        
+        try {
+            const data = JSON.parse(raw);
+            // Verify structure
+            if (!data.projects || !data.writing) {
+                throw new Error('Invalid data structure. Missing projects or writing.');
+            }
+            
+            // Save to draft
+            localStorage.setItem('jackson_portfolio_data_draft', raw);
+            alert('Data imported successfully! The page will now reload to apply changes.');
+            location.reload();
+        } catch (e) {
+            alert('Import failed: ' + e.message);
+        }
+    });
+}
+
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
