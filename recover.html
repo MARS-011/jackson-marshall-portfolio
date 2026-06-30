@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Recovery — Jackson Marshall</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .recovery-box {
+            background: rgba(184, 197, 255, 0.05);
+            border: 1px solid rgba(184, 197, 255, 0.2);
+            padding: 2rem;
+            margin-top: 2rem;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        .data-preview {
+            background: #05071a;
+            padding: 1rem;
+            max-height: 400px;
+            overflow: auto;
+            font-size: 0.8rem;
+            color: #b8c5ff;
+            margin: 1rem 0;
+            border: 1px solid rgba(184, 197, 255, 0.1);
+        }
+        .btn {
+            background: #b8c5ff;
+            color: #0a0e2e;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <nav class="page-nav">
+            <a href="index.html" class="nav-link">← Back to Site</a>
+        </nav>
+
+        <section class="page-header">
+            <h1 class="page-title">Data Recovery</h1>
+            <p class="page-subtitle">This tool will check your browser for data saved before the recent update.</p>
+        </section>
+
+        <div class="recovery-box">
+            <div id="status">Checking for old data...</div>
+            <div id="preview" class="data-preview" style="display: none;"></div>
+            <div id="actions" style="display: none; margin-top: 1rem; display: flex; gap: 1rem;">
+                <button id="migrateBtn" class="btn">Migrate to New System</button>
+                <button id="downloadBtn" class="btn" style="background: transparent; border: 1px solid #b8c5ff; color: #b8c5ff;">Download Backup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const OLD_KEY = 'jackson_portfolio_data';
+        const NEW_KEY = 'jackson_portfolio_data_draft';
+
+        const statusEl = document.getElementById('status');
+        const previewEl = document.getElementById('preview');
+        const actionsEl = document.getElementById('actions');
+        const migrateBtn = document.getElementById('migrateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        const oldDataRaw = localStorage.getItem(OLD_KEY);
+
+        if (oldDataRaw) {
+            const oldData = JSON.parse(oldDataRaw);
+            statusEl.innerHTML = '<span style="color: #4ade80;">✓ Found old data!</span> Review it below:';
+            previewEl.textContent = JSON.stringify(oldData, null, 4);
+            previewEl.style.display = 'block';
+            actionsEl.style.display = 'flex';
+
+            migrateBtn.onclick = () => {
+                localStorage.setItem(NEW_KEY, oldDataRaw);
+                alert('Success! Your old data has been moved to the new draft system. Go to the Admin panel to Publish it to GitHub.');
+                window.location.href = 'admin.html';
+            };
+
+            downloadBtn.onclick = () => {
+                const blob = new Blob([oldDataRaw], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'portfolio_backup.json';
+                a.click();
+            };
+        } else {
+            statusEl.innerHTML = '<span style="color: #f87171;">✗ No old data found in this browser.</span><br><br>If you wrote your content on a different computer or browser, you will need to open this recovery page on that specific device.';
+        }
+    </script>
+</body>
+</html>
