@@ -143,9 +143,9 @@ function openProjectDetail(project) {
         </header>
 
         <div class="detail-body">
-            ${project.previewImage ? `
+            ${(project.previewImage && project.previewImage.trim() !== '') ? `
                 <div class="detail-preview-image">
-                    <img src="${project.previewImage}" alt="${project.name} Preview" style="width: 100%; max-width: 800px; margin-bottom: 2rem; border: 1px solid rgba(184, 197, 255, 0.2);">
+                    <img src="${project.previewImage}" alt="${project.name} Preview" style="width: 100%; max-width: 800px; margin-bottom: 2rem; border: 1px solid rgba(184, 197, 255, 0.2); display: block;">
                 </div>
             ` : ''}
             <div class="detail-description">${formatText(project.fullDescription)}</div>
@@ -187,8 +187,9 @@ function openProjectDetail(project) {
     overlay.style.display = 'block';
     gsap.to(overlay, { opacity: 1, duration: 0.5, ease: 'power2.out' });
     
-    // Disable body scroll
+    // Disable body scroll and stop Lenis
     document.body.style.overflow = 'hidden';
+    if (lenis) lenis.stop();
 }
 
 function formatText(text) {
@@ -205,6 +206,7 @@ function closeProjectDetail() {
             overlay.style.display = 'none';
             detailContent.innerHTML = '';
             document.body.style.overflow = '';
+            if (lenis) lenis.start();
         }
     });
 }

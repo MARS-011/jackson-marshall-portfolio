@@ -286,15 +286,16 @@ function deleteProject(id) {
 }
 
 document.getElementById('addProjectButton')?.addEventListener('click', () => {
-	    const newProject = {
-	        name: 'New Project',
-	        description: 'Project description',
-	        fullDescription: 'Full project description',
-	        stack: ['Tech1', 'Tech2'],
-	        github: 'https://github.com',
-            links: [],
-            photos: []
-	    };
+		    const newProject = {
+		        name: 'New Project',
+		        description: 'Project description',
+		        fullDescription: 'Full project description',
+                previewImage: '',
+		        stack: ['Tech1', 'Tech2'],
+		        github: 'https://github.com',
+	            links: [],
+	            photos: []
+		    };
     DataManager.addProject(newProject);
     renderProjectsEditor();
 });
