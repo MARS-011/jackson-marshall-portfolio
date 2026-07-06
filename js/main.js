@@ -54,7 +54,7 @@ function loadDynamicContent() {
     // Update bio section
     const bioContent = document.getElementById('bioContent');
     if (bioContent && bio) {
-        bioContent.innerHTML = bio.content;
+        bioContent.innerHTML = formatText(bio.content);
     }
 
     // Update Projects Grid (Show first 3)
@@ -102,6 +102,12 @@ function loadDynamicContent() {
 
     // Refresh ScrollTrigger after content loads
     ScrollTrigger.refresh();
+}
+
+function formatText(text) {
+    if (!text) return '';
+    if (text.includes('<p>') || text.includes('<div')) return text; // Already HTML
+    return text.split('\n').map(line => `<p>${line.trim()}</p>`).filter(p => p !== '<p></p>').join('');
 }
 
 /* ============================================================================

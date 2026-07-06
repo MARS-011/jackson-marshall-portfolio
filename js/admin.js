@@ -147,8 +147,16 @@ function renderProjectsEditor() {
             </div>
             
             <div class="form-group">
-                <label>Full Description</label>
-                <textarea onchange="updateProjectField(${project.id}, 'fullDescription', this.value)">${project.fullDescription}</textarea>
+                <label>Full Description (Use Enter for new paragraphs)</label>
+                <textarea style="height: 200px;" onchange="updateProjectField(${project.id}, 'fullDescription', this.value)">${project.fullDescription}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Preview Image URL (Appears under description)</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or Base64">
+                    <input type="file" accept="image/*" onchange="handleSingleUpload(this, (val) => updateProjectField(${project.id}, 'previewImage', val))" style="width: auto;">
+                </div>
             </div>
             
             <div class="form-group">
@@ -167,14 +175,29 @@ function renderProjectsEditor() {
                 </div>
 
                 <div class="form-group">
-                    <label>Photos (URLs, comma-separated)</label>
-                    <input type="text" id="photoUrls-${project.id}" value="${(project.photos || []).join(', ')}" onchange="updateProjectField(${project.id}, 'photos', this.value.split(',').map(s => s.trim()).filter(s => s))">
-                </div>
-                
-                <div class="form-group">
-                    <label>Upload Photos (Add to existing)</label>
+                    <label>Project Photos & Sizes</label>
+                    <div class="admin-photo-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
+                        ${(project.photos || []).map((photo, index) => {
+                            const isObject = typeof photo === 'object';
+                            const url = isObject ? photo.url : photo;
+                            const size = isObject ? photo.size || '100%' : '100%';
+                            return `
+                                <div style="display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
+                                    <img src="${url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 2px;">
+                                    <input type="text" value="${url}" style="flex: 1;" onchange="updateProjectPhoto(${project.id}, ${index}, 'url', this.value)">
+                                    <select style="width: 80px;" onchange="updateProjectPhoto(${project.id}, ${index}, 'size', this.value)">
+                                        <option value="100%" ${size === '100%' ? 'selected' : ''}>Full</option>
+                                        <option value="75%" ${size === '75%' ? 'selected' : ''}>75%</option>
+                                        <option value="50%" ${size === '50%' ? 'selected' : ''}>50%</option>
+                                        <option value="25%" ${size === '25%' ? 'selected' : ''}>25%</option>
+                                    </select>
+                                    <button class="delete-button" style="padding: 2px 8px;" onclick="removeProjectPhoto(${project.id}, ${index})">×</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
                     <input type="file" multiple accept="image/*" onchange="handlePhotoUpload(${project.id}, this)">
-                    <p class="form-hint" style="font-size: 0.7rem; color: #5a6490; margin-top: 0.25rem;">Files are converted to Base64 and stored locally.</p>
+                    <p class="form-hint" style="font-size: 0.7rem; color: #5a6490; margin-top: 0.25rem;">Upload multiple images. Adjust sizes individually.</p>
                 </div>
 	        </div>
 	    `).join('');
@@ -182,6 +205,19 @@ function renderProjectsEditor() {
 
 function updateProjectField(id, field, value) {
     DataManager.updateProject(id, { [field]: value });
+}
+
+async function handleSingleUpload(input, callback) {
+    const file = input.files[0];
+    if (file) {
+        try {
+            const base64 = await convertToBase64(file);
+            callback(base64);
+            renderProjectsEditor();
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+    }
 }
 
 async function handlePhotoUpload(projectId, input) {
@@ -197,20 +233,39 @@ async function handlePhotoUpload(projectId, input) {
     for (const file of files) {
         try {
             const base64 = await convertToBase64(file);
-            newPhotos.push(base64);
+            newPhotos.push({ url: base64, size: '100%' });
         } catch (error) {
             console.error('Error converting file:', error);
         }
     }
 
     DataManager.updateProject(projectId, { photos: newPhotos });
-    
-    // Update the UI input field and re-render
-    const urlInput = document.getElementById(`photoUrls-${projectId}`);
-    if (urlInput) {
-        urlInput.value = newPhotos.join(', ');
+    renderProjectsEditor();
+}
+
+function updateProjectPhoto(projectId, photoIndex, field, value) {
+    const projects = DataManager.getProjects();
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const newPhotos = [...(project.photos || [])];
+    if (typeof newPhotos[photoIndex] !== 'object') {
+        newPhotos[photoIndex] = { url: newPhotos[photoIndex], size: '100%' };
     }
+    newPhotos[photoIndex][field] = value;
     
+    DataManager.updateProject(projectId, { photos: newPhotos });
+}
+
+function removeProjectPhoto(projectId, photoIndex) {
+    const projects = DataManager.getProjects();
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const newPhotos = [...(project.photos || [])];
+    newPhotos.splice(photoIndex, 1);
+    
+    DataManager.updateProject(projectId, { photos: newPhotos });
     renderProjectsEditor();
 }
 
@@ -279,8 +334,8 @@ function renderWritingEditor() {
             </div>
             
             <div class="form-group">
-                <label>Full Content (HTML)</label>
-                <textarea onchange="updateArticleField(${article.id}, 'content', this.value)">${article.content}</textarea>
+                <label>Full Content (Use Enter for new paragraphs)</label>
+                <textarea style="height: 300px;" onchange="updateArticleField(${article.id}, 'content', this.value)">${article.content}</textarea>
             </div>
         </div>
     `).join('');
@@ -367,6 +422,7 @@ function renderBioEditor() {
     
     if (editor && bio) {
         editor.value = bio.content;
+        editor.style.height = '200px';
         editor.addEventListener('change', (e) => {
             updateBio(e.target.value);
         });

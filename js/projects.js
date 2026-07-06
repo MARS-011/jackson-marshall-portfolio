@@ -143,16 +143,26 @@ function openProjectDetail(project) {
         </header>
 
         <div class="detail-body">
-            <p class="detail-description">${project.fullDescription}</p>
+            ${project.previewImage ? `
+                <div class="detail-preview-image">
+                    <img src="${project.previewImage}" alt="${project.name} Preview" style="width: 100%; max-width: 800px; margin-bottom: 2rem; border: 1px solid rgba(184, 197, 255, 0.2);">
+                </div>
+            ` : ''}
+            <div class="detail-description">${formatText(project.fullDescription)}</div>
         </div>
 
         ${project.photos && project.photos.length > 0 ? `
             <div class="detail-photos-large">
-                ${project.photos.map(photo => `
-                    <div class="detail-photo-item">
-                        <img src="${photo}" alt="${project.name}">
-                    </div>
-                `).join('')}
+                ${project.photos.map(photo => {
+                    const isObject = typeof photo === 'object';
+                    const src = isObject ? photo.url : photo;
+                    const size = isObject ? photo.size || '100%' : '100%';
+                    return `
+                        <div class="detail-photo-item" style="width: ${size}; margin: 0 auto;">
+                            <img src="${src}" alt="${project.name}">
+                        </div>
+                    `;
+                }).join('')}
             </div>
         ` : ''}
 
@@ -179,6 +189,11 @@ function openProjectDetail(project) {
     
     // Disable body scroll
     document.body.style.overflow = 'hidden';
+}
+
+function formatText(text) {
+    if (!text) return '';
+    return text.split('\n').map(line => `<p>${line}</p>`).join('');
 }
 
 function closeProjectDetail() {
