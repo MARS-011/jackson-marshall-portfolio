@@ -191,6 +191,11 @@ function openProjectDetail(project) {
     // Disable body scroll and stop Lenis
     document.body.classList.add('overlay-open');
     if (lenis) lenis.stop();
+
+    // Prevent mouse wheel events from bubbling up to Lenis or other listeners
+    overlay.addEventListener('wheel', (e) => {
+        e.stopPropagation();
+    }, { passive: false });
 }
 
 function formatText(text) {

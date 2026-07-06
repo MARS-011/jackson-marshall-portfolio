@@ -154,7 +154,7 @@ function renderProjectsEditor() {
             <div class="form-group">
                 <label>Preview Image URL (Appears under description)</label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or Base64">
+                    <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or Base64">
                     <input type="file" accept="image/*" onchange="handleSingleUpload(this, (val) => updateProjectField(${project.id}, 'previewImage', val))" style="width: auto;">
                 </div>
             </div>
@@ -204,7 +204,10 @@ function renderProjectsEditor() {
 }
 
 function updateProjectField(id, field, value) {
+    console.log(`Updating project ${id} field ${field} with value:`, value.substring ? value.substring(0, 50) + '...' : value);
     DataManager.updateProject(id, { [field]: value });
+    // Re-render to ensure UI reflects the latest state from DataManager
+    renderProjectsEditor();
 }
 
 async function handleSingleUpload(input, callback) {
