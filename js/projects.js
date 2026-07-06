@@ -143,9 +143,9 @@ function openProjectDetail(project) {
         </header>
 
         <div class="detail-body">
-            ${(project.previewImage && project.previewImage.trim() !== '') ? `
-                <div class="detail-preview-image">
-                    <img src="${project.previewImage}" alt="${project.name} Preview" style="width: 100%; max-width: 800px; margin-bottom: 2rem; border: 1px solid rgba(184, 197, 255, 0.2); display: block;">
+            ${(project.previewImage && String(project.previewImage).trim() !== '') ? `
+                <div class="detail-preview-image" style="margin-bottom: 3rem;">
+                    <img src="${String(project.previewImage)}" alt="${project.name} Preview" style="width: 100%; max-width: 1000px; border: 1px solid rgba(184, 197, 255, 0.2); display: block; margin: 0 auto;">
                 </div>
             ` : ''}
             <div class="detail-description">${formatText(project.fullDescription)}</div>
@@ -154,12 +154,12 @@ function openProjectDetail(project) {
         ${project.photos && project.photos.length > 0 ? `
             <div class="detail-photos-large">
                 ${project.photos.map(photo => {
-                    const isObject = typeof photo === 'object';
+                    const isObject = typeof photo === 'object' && photo !== null;
                     const src = isObject ? photo.url : photo;
                     const size = isObject ? photo.size || '100%' : '100%';
                     return `
                         <div class="detail-photo-item" style="width: ${size}; margin: 0 auto;">
-                            <img src="${src}" alt="${project.name}">
+                            <img src="${src}" alt="${project.name}" style="width: 100%; display: block;">
                         </div>
                     `;
                 }).join('')}
@@ -185,10 +185,11 @@ function openProjectDetail(project) {
 
     // Show overlay
     overlay.style.display = 'block';
+    overlay.scrollTop = 0; // Reset scroll position
     gsap.to(overlay, { opacity: 1, duration: 0.5, ease: 'power2.out' });
     
     // Disable body scroll and stop Lenis
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('overlay-open');
     if (lenis) lenis.stop();
 }
 
@@ -205,7 +206,7 @@ function closeProjectDetail() {
         onComplete: () => {
             overlay.style.display = 'none';
             detailContent.innerHTML = '';
-            document.body.style.overflow = '';
+            document.body.classList.remove('overlay-open');
             if (lenis) lenis.start();
         }
     });
@@ -228,6 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
     if (projectId) {
+        const projects = DataManager.getProjects();
         const project = projects.find(p => p.id === parseInt(projectId));
         if (project) {
             setTimeout(() => openProjectDetail(project), 500);
