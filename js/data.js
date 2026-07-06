@@ -10,19 +10,23 @@ const DataManager = (() => {
     let cachedData = null;
 
     // Fetch data from content.json
-    async function initialize() {
+    async function initialize(forceRemote = false) {
         try {
-            const response = await fetch(CONTENT_URL);
+            const response = await fetch(`${CONTENT_URL}?t=${Date.now()}`); // Cache busting
             if (!response.ok) throw new Error('Failed to fetch content.json');
             const remoteData = await response.json();
             
             // Check for local draft
             const draft = localStorage.getItem(STORAGE_KEY);
-            if (draft) {
+            if (draft && !forceRemote) {
                 cachedData = JSON.parse(draft);
                 console.log('Loaded draft from localStorage');
             } else {
                 cachedData = remoteData;
+                if (forceRemote) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    console.log('Forced remote data load, draft cleared');
+                }
             }
             return cachedData;
         } catch (error) {

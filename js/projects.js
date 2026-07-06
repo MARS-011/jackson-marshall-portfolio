@@ -194,8 +194,12 @@ function openProjectDetail(project) {
 
     // Prevent mouse wheel events from bubbling up to Lenis or other listeners
     overlay.addEventListener('wheel', (e) => {
+        // Only stop propagation if we are actually on the overlay
         e.stopPropagation();
     }, { passive: false });
+
+    // Force pointer events on the overlay to ensure it receives wheel events
+    overlay.style.pointerEvents = 'auto';
 }
 
 function formatText(text) {

@@ -203,9 +203,20 @@ function renderProjectsEditor() {
 	    `).join('');
 }
 
+function showSyncIndicator() {
+    const indicator = document.getElementById('syncIndicator');
+    if (indicator) {
+        indicator.style.display = 'block';
+        setTimeout(() => {
+            indicator.style.display = 'none';
+        }, 2000);
+    }
+}
+
 function updateProjectField(id, field, value) {
     console.log(`Updating project ${id} field ${field} with value:`, value.substring ? value.substring(0, 50) + '...' : value);
     DataManager.updateProject(id, { [field]: value });
+    showSyncIndicator();
     // Re-render to ensure UI reflects the latest state from DataManager
     renderProjectsEditor();
 }
@@ -548,10 +559,21 @@ if (importDataBtn) {
             
             // Save to draft
             localStorage.setItem('jackson_portfolio_data_draft', raw);
-            alert('Data imported successfully! The page will now reload to apply changes.');
-            location.reload();
-        } catch (e) {
-            alert('Import failed: ' + e.message);
+            alert('Data imported to local draft! Refreshing page...');
+            window.location.reload();
+        } catch (error) {
+            alert('Import failed: ' + error.message);
+        }
+    });
+}
+
+const resetDraftButton = document.getElementById('resetDraftButton');
+if (resetDraftButton) {
+    resetDraftButton.addEventListener('click', async () => {
+        if (confirm('This will delete all your unsaved changes and reload data from GitHub. Continue?')) {
+            await DataManager.initialize(true); // forceRemote = true
+            alert('Draft reset! Data reloaded from GitHub.');
+            window.location.reload();
         }
     });
 }
