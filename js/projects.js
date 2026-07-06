@@ -37,10 +37,17 @@ function initializeCardAnimations() {
         projectsGrid.innerHTML = projects.map(project => `
             <div class="project-card-expandable" data-id="${project.id}">
                 <div class="card-front">
-                    <h3 class="card-title">${project.name}</h3>
-                    <p class="card-description">${project.description}</p>
-                    <div class="card-tags">
-                        ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    ${project.previewImage ? `
+                        <div class="project-card-preview">
+                            <img src="${project.previewImage}" alt="${project.name}">
+                        </div>
+                    ` : ''}
+                    <div class="project-card-content">
+                        <h3 class="card-title">${project.name}</h3>
+                        <p class="card-description">${project.description}</p>
+                        <div class="card-tags">
+                            ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
                     </div>
                 </div>
                 <div class="card-back">

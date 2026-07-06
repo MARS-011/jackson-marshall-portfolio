@@ -62,11 +62,18 @@ function loadDynamicContent() {
     if (projectsGrid) {
         projectsGrid.innerHTML = projects.slice(0, 3).map(project => `
             <article class="project-card" style="cursor: pointer;" onclick="window.location.href='projects.html?id=${project.id}'">
-                <h3 class="project-name">${project.name}</h3>
-                <div class="project-tags">
-                    ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                ${project.previewImage ? `
+                    <div class="project-card-preview">
+                        <img src="${project.previewImage}" alt="${project.name}">
+                    </div>
+                ` : ''}
+                <div class="project-card-content">
+                    <h3 class="project-name">${project.name}</h3>
+                    <div class="project-tags">
+                        ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <p class="project-description">${project.description}</p>
                 </div>
-                <p class="project-description">${project.description}</p>
             </article>
         `).join('');
     }
