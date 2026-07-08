@@ -1,205 +1,622 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin — Jackson Marshall</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/admin.css">
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            if (!document.querySelector(".ascii-border-left")) {
-                const leftBorder = document.createElement("div");
-                leftBorder.className = "ascii-border-left";
-                const rightBorder = document.createElement("div");
-                rightBorder.className = "ascii-border-right";
-                document.body.insertBefore(leftBorder, document.body.firstChild);
-                document.body.insertBefore(rightBorder, document.body.firstChild);
-            }
+/* ============================================================================
+   ADMIN DASHBOARD — JavaScript
+   Passcode protection, content editing, data persistence
+   ============================================================================ */
+
+// Configuration
+// NOTE: this passcode is a soft UX gate only (visible in page source), not real
+// security. The actual write-access boundary is the GitHub Personal Access
+// Token required below to publish — nothing is written without that.
+const ADMIN_PASSCODE = '2024';
+const SESSION_KEY = 'admin_session';
+const SESSION_DURATION = 3600000; // 1 hour in milliseconds
+
+// DOM Elements
+const passcodeScreen = document.getElementById('passcodeScreen');
+const adminDashboard = document.getElementById('adminDashboard');
+const passcodeForm = document.getElementById('passcodeForm');
+const passcodeInput = document.getElementById('passcodeInput');
+const passcodeError = document.getElementById('passcodeError');
+const logoutButton = document.getElementById('logoutButton');
+
+// Tab elements
+const adminTabs = document.querySelectorAll('.admin-tab');
+const adminTabContents = document.querySelectorAll('.admin-tab-content');
+
+// ============================================================================
+// SESSION MANAGEMENT
+// ============================================================================
+
+function isSessionValid() {
+    const session = sessionStorage.getItem(SESSION_KEY);
+    if (!session) return false;
+    
+    const sessionTime = parseInt(session);
+    const now = Date.now();
+    
+    if (now - sessionTime > SESSION_DURATION) {
+        sessionStorage.removeItem(SESSION_KEY);
+        return false;
+    }
+    
+    return true;
+}
+
+function createSession() {
+    sessionStorage.setItem(SESSION_KEY, Date.now().toString());
+}
+
+function destroySession() {
+    sessionStorage.removeItem(SESSION_KEY);
+}
+
+// ============================================================================
+// PASSCODE VERIFICATION
+// ============================================================================
+
+passcodeForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = passcodeInput.value.trim();
+    
+    if (input === ADMIN_PASSCODE) {
+        passcodeError.textContent = '';
+        createSession();
+        showDashboard();
+    } else {
+        passcodeError.textContent = 'Incorrect passcode. Try again.';
+        passcodeInput.value = '';
+        passcodeInput.focus();
+    }
+});
+
+logoutButton.addEventListener('click', () => {
+    destroySession();
+    location.reload();
+});
+
+// ============================================================================
+// DASHBOARD DISPLAY
+// ============================================================================
+
+function showDashboard() {
+    gsap.to(passcodeScreen, {
+        opacity: 0,
+        pointerEvents: 'none',
+        duration: 0.3,
+        ease: 'power2.in',
+    });
+
+    gsap.to(adminDashboard, {
+        opacity: 1,
+        pointerEvents: 'auto',
+        duration: 0.4,
+        delay: 0.2,
+        ease: 'power2.out',
+    });
+
+    adminDashboard.style.display = 'block';
+    initializeDashboard();
+}
+
+function initializeDashboard() {
+    renderProjectsEditor();
+    renderWritingEditor();
+    renderGalleryEditor();
+    renderBioEditor();
+    renderLinksEditor();
+}
+
+// ============================================================================
+// TAB NAVIGATION
+// ============================================================================
+
+adminTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        
+        // Remove active class from all tabs and contents
+        adminTabs.forEach(t => t.classList.remove('active'));
+        adminTabContents.forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        document.getElementById(`${tabName}-tab`).classList.add('active');
+    });
+});
+
+// ============================================================================
+// PROJECTS EDITOR
+// ============================================================================
+
+function renderProjectsEditor() {
+    const editor = document.getElementById('projectsEditor');
+    const projects = DataManager.getProjects();
+    
+    editor.innerHTML = projects.map(project => `
+        <div class="editor-item">
+            <div class="editor-item-header">
+                <h3 class="editor-item-title">${project.name}</h3>
+                <button class="delete-button" onclick="deleteProject(${project.id})">Delete</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Project Name</label>
+                <input type="text" value="${project.name}" onchange="updateProjectField(${project.id}, 'name', this.value)">
+            </div>
+            
+            <div class="form-group">
+                <label>Short Description</label>
+                <textarea onchange="updateProjectField(${project.id}, 'description', this.value)">${project.description}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Full Description (Use Enter for new paragraphs)</label>
+                <textarea style="height: 200px;" onchange="updateProjectField(${project.id}, 'fullDescription', this.value)">${project.fullDescription}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Preview Image URL (Appears under description)</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or upload a file →">
+                    <input type="file" accept="image/*" onchange="handleSingleUpload(this, (val) => updateProjectField(${project.id}, 'previewImage', val))" style="width: auto;">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>GitHub Link</label>
+                <input type="url" value="${project.github}" onchange="updateProjectField(${project.id}, 'github', this.value)">
+            </div>
+            
+	            <div class="form-group">
+	                <label>Tech Stack (comma-separated)</label>
+	                <input type="text" value="${project.stack.join(', ')}" onchange="updateProjectField(${project.id}, 'stack', this.value.split(',').map(s => s.trim()))">
+	            </div>
+
+                <div class="form-group">
+                    <label>External Links (format: Label|URL, comma-separated)</label>
+                    <input type="text" value="${(project.links || []).map(l => `${l.label}|${l.url}`).join(', ')}" onchange="updateProjectField(${project.id}, 'links', this.value.split(',').filter(s => s.trim()).map(s => { const [label, url] = s.split('|'); return { label: label?.trim(), url: url?.trim() }; }))">
+                </div>
+
+                <div class="form-group">
+                    <label>Project Photos & Sizes</label>
+                    <div class="admin-photo-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
+                        ${(project.photos || []).map((photo, index) => {
+                            const isObject = typeof photo === 'object';
+                            const url = isObject ? photo.url : photo;
+                            const size = isObject ? photo.size || '100%' : '100%';
+                            return `
+                                <div style="display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
+                                    <img src="${url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 2px;">
+                                    <input type="text" value="${url}" style="flex: 1;" onchange="updateProjectPhoto(${project.id}, ${index}, 'url', this.value)">
+                                    <select style="width: 80px;" onchange="updateProjectPhoto(${project.id}, ${index}, 'size', this.value)">
+                                        <option value="100%" ${size === '100%' ? 'selected' : ''}>Full</option>
+                                        <option value="75%" ${size === '75%' ? 'selected' : ''}>75%</option>
+                                        <option value="50%" ${size === '50%' ? 'selected' : ''}>50%</option>
+                                        <option value="25%" ${size === '25%' ? 'selected' : ''}>25%</option>
+                                    </select>
+                                    <button class="delete-button" style="padding: 2px 8px;" onclick="removeProjectPhoto(${project.id}, ${index})">×</button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    <input type="file" multiple accept="image/*" onchange="handlePhotoUpload(${project.id}, this)">
+                    <p class="form-hint" style="font-size: 0.7rem; color: #5a6490; margin-top: 0.25rem;">Upload multiple images. Adjust sizes individually.</p>
+                </div>
+	        </div>
+	    `).join('');
+}
+
+function showSyncIndicator() {
+    const indicator = document.getElementById('syncIndicator');
+    if (indicator) {
+        indicator.style.display = 'block';
+        setTimeout(() => {
+            indicator.style.display = 'none';
+        }, 2000);
+    }
+}
+
+function updateProjectField(id, field, value) {
+    console.log(`Updating project ${id} field ${field} with value:`, value.substring ? value.substring(0, 50) + '...' : value);
+    DataManager.updateProject(id, { [field]: value });
+    showSyncIndicator();
+    // Re-render to ensure UI reflects the latest state from DataManager
+    renderProjectsEditor();
+}
+
+function getUploadToken() {
+    const token = (githubTokenInput?.value || '').trim() || GITHUB_TOKEN;
+    if (!token) {
+        alert('Please enter your GitHub Personal Access Token first (needed to upload images to the repo).');
+        githubTokenInput?.focus();
+        return null;
+    }
+    return token;
+}
+
+async function handleSingleUpload(input, callback) {
+    const file = input.files[0];
+    if (!file) return;
+    const token = getUploadToken();
+    if (!token) return;
+
+    try {
+        showSyncIndicator();
+        const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio');
+        callback(path);
+        renderProjectsEditor();
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        alert(`Image upload failed: ${error.message}`);
+    }
+}
+
+async function handlePhotoUpload(projectId, input) {
+    const files = Array.from(input.files);
+    if (files.length === 0) return;
+    const token = getUploadToken();
+    if (!token) return;
+
+    const projects = DataManager.getProjects();
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const newPhotos = [...(project.photos || [])];
+
+    for (const file of files) {
+        try {
+            const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio', 'assets/images/projects');
+            newPhotos.push({ url: path, size: '100%' });
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            alert(`Image upload failed for ${file.name}: ${error.message}`);
+        }
+    }
+
+    DataManager.updateProject(projectId, { photos: newPhotos });
+    renderProjectsEditor();
+}
+
+function updateProjectPhoto(projectId, photoIndex, field, value) {
+    const projects = DataManager.getProjects();
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const newPhotos = [...(project.photos || [])];
+    if (typeof newPhotos[photoIndex] !== 'object') {
+        newPhotos[photoIndex] = { url: newPhotos[photoIndex], size: '100%' };
+    }
+    newPhotos[photoIndex][field] = value;
+    
+    DataManager.updateProject(projectId, { photos: newPhotos });
+}
+
+function removeProjectPhoto(projectId, photoIndex) {
+    const projects = DataManager.getProjects();
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const newPhotos = [...(project.photos || [])];
+    newPhotos.splice(photoIndex, 1);
+    
+    DataManager.updateProject(projectId, { photos: newPhotos });
+    renderProjectsEditor();
+}
+
+function deleteProject(id) {
+    if (confirm('Delete this project?')) {
+        DataManager.deleteProject(id);
+        renderProjectsEditor();
+    }
+}
+
+document.getElementById('addProjectButton')?.addEventListener('click', () => {
+		    const newProject = {
+		        name: 'New Project',
+		        description: 'Project description',
+		        fullDescription: 'Full project description',
+                previewImage: '',
+		        stack: ['Tech1', 'Tech2'],
+		        github: '',
+	            links: [],
+	            photos: []
+		    };
+    DataManager.addProject(newProject);
+    renderProjectsEditor();
+});
+
+document.getElementById('saveProjectsButton')?.addEventListener('click', () => {
+    alert('Projects saved!');
+});
+
+// ============================================================================
+// WRITING EDITOR
+// ============================================================================
+
+function renderWritingEditor() {
+    const editor = document.getElementById('writingEditor');
+    const articles = DataManager.getWriting();
+    
+    editor.innerHTML = articles.map(article => `
+        <div class="editor-item">
+            <div class="editor-item-header">
+                <h3 class="editor-item-title">${article.title}</h3>
+                <button class="delete-button" onclick="deleteArticle(${article.id})">Delete</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Article Title</label>
+                <input type="text" value="${article.title}" onchange="updateArticleField(${article.id}, 'title', this.value)">
+            </div>
+            
+            <div class="form-group">
+                <label>Date</label>
+                <input type="text" value="${article.date}" onchange="updateArticleField(${article.id}, 'date', this.value)">
+            </div>
+            
+            <div class="form-group">
+                <label>Summary</label>
+                <textarea onchange="updateArticleField(${article.id}, 'summary', this.value)">${article.summary}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Full Content (Use Enter for new paragraphs)</label>
+                <textarea style="height: 300px;" onchange="updateArticleField(${article.id}, 'content', this.value)">${article.content}</textarea>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateArticleField(id, field, value) {
+    DataManager.updateArticle(id, { [field]: value });
+}
+
+function deleteArticle(id) {
+    if (confirm('Delete this article?')) {
+        DataManager.deleteArticle(id);
+        renderWritingEditor();
+    }
+}
+
+document.getElementById('addArticleButton')?.addEventListener('click', () => {
+    const newArticle = {
+        title: 'New Article',
+        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        summary: 'Article summary',
+        content: '<p>Article content goes here.</p>'
+    };
+    DataManager.addArticle(newArticle);
+    renderWritingEditor();
+});
+
+document.getElementById('saveWritingButton')?.addEventListener('click', () => {
+    alert('Writing saved!');
+});
+
+// ============================================================================
+// GALLERY EDITOR
+// ============================================================================
+
+function renderGalleryEditor() {
+    const editor = document.getElementById('galleryEditor');
+    const gallery = DataManager.getGallery();
+    
+    editor.innerHTML = `
+        <div class="gallery-upload-grid">
+            ${gallery.map((item, index) => `
+                <div class="gallery-upload-item" onclick="triggerGalleryUpload(${item.id})">
+                    ${item.imagePath ? `<img src="${item.imagePath}" alt="Render ${item.id}">` : `<div class="gallery-upload-placeholder">[RENDER_${String(index + 1).padStart(2, '0')}]</div>`}
+                </div>
+                <input type="file" id="gallery-input-${item.id}" class="gallery-upload-input" onchange="handleGalleryUpload(${item.id}, event)">
+            `).join('')}
+        </div>
+    `;
+}
+
+function triggerGalleryUpload(id) {
+    document.getElementById(`gallery-input-${id}`).click();
+}
+
+async function handleGalleryUpload(id, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const token = getUploadToken();
+    if (!token) return;
+
+    try {
+        showSyncIndicator();
+        const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio', 'assets/images/gallery');
+        const gallery = DataManager.getGallery();
+        const item = gallery.find(g => g.id === id);
+        if (item) {
+            item.imagePath = path;
+            DataManager.saveGallery(gallery);
+            renderGalleryEditor();
+        }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        alert(`Image upload failed: ${error.message}`);
+    }
+}
+
+document.getElementById('saveGalleryButton')?.addEventListener('click', () => {
+    alert('Gallery saved!');
+});
+
+// ============================================================================
+// BIO EDITOR
+// ============================================================================
+
+function renderBioEditor() {
+    const editor = document.getElementById('bioEditor');
+    const bio = DataManager.getBio();
+    
+    if (editor && bio) {
+        editor.value = bio.content;
+        editor.style.height = '200px';
+        editor.addEventListener('change', (e) => {
+            updateBio(e.target.value);
         });
-    </script>
-</head>
-<body>
-    <!-- Background Video -->
-    <video class="bg-video" autoplay muted playsinline loop>
-        <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
-        <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
-    </video>
+    }
+}
 
-    <!-- Content Container -->
-    <div class="content-wrapper">
-        <!-- Navigation -->
-        <nav class="page-nav">
-            <a href="index.html" class="nav-link">← Back</a>
-        </nav>
+function updateBio(content) {
+    const bio = DataManager.getBio();
+    bio.content = content;
+    DataManager.saveBio(bio);
+}
 
-        <!-- Passcode Screen -->
-        <div class="admin-container" id="passcodeScreen">
-            <section class="passcode-section">
-                <h1 class="passcode-title">Admin Access</h1>
-                <p class="passcode-subtitle">Enter passcode to continue.</p>
-                
-                <form class="passcode-form" id="passcodeForm">
-                    <input 
-                        type="password" 
-                        id="passcodeInput" 
-                        class="passcode-input" 
-                        placeholder="••••••••" 
-                        autocomplete="off"
-                    >
-                    <button type="submit" class="passcode-button">Unlock</button>
-                </form>
+document.getElementById('saveBioButton')?.addEventListener('click', () => {
+    alert('Bio saved!');
+});
 
-                <p class="passcode-error" id="passcodeError"></p>
-            </section>
-        </div>
+// ============================================================================
+// LINKS EDITOR
+// ============================================================================
 
-        <!-- Admin Dashboard (Hidden until passcode entered) -->
-        <div class="admin-container" id="adminDashboard" style="display: none;">
-            <section class="admin-header">
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <h1 class="admin-title">Admin Dashboard</h1>
-                    <div id="publishStatus" style="font-size: 0.8rem; font-family: 'IBM Plex Mono', monospace;"></div>
-                </div>
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <button class="save-button" id="publishButton" style="background: #b8c5ff; color: #0a0e2e; font-weight: 700;">PUBLISH TO GITHUB</button>
-                    <button class="logout-button" id="logoutButton">Logout</button>
-                </div>
-            </section>
-            
-            <div id="syncIndicator" style="background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.2); color: #4ade80; padding: 0.5rem 1rem; margin-bottom: 1rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; display: none;">
-                ✓ Changes saved to local draft
+function renderLinksEditor() {
+    const editor = document.getElementById('linksEditor');
+    const links = DataManager.getLinks();
+    
+    editor.innerHTML = `
+        <div class="editor-item">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" value="${links.email}" onchange="updateLink('email', this.value)">
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-                <section class="admin-config" style="padding: 1.5rem; border: 1px solid rgba(184, 197, 255, 0.2); background: rgba(184, 197, 255, 0.05);">
-                    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">GitHub Configuration</h3>
-                    <div class="form-group">
-                        <label>GitHub Personal Access Token (PAT)</label>
-                        <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" style="width: 100%; background: rgba(10, 14, 46, 0.8); border: 1px solid rgba(184, 197, 255, 0.3); color: #e8ecff; padding: 0.8rem; font-family: 'IBM Plex Mono', monospace;">
-                        <p style="font-size: 0.7rem; color: #5a6490; margin-top: 0.5rem;">Token is stored in memory for this session only. Do not commit it.</p>
-                    </div>
-                </section>
-
-                <section class="admin-config" style="padding: 1.5rem; border: 1px solid rgba(184, 197, 255, 0.2); background: rgba(184, 197, 255, 0.05);">
-                    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.1em;">Data Import (Recovery)</h3>
-                    <div class="form-group">
-                        <label>Paste Recovery JSON</label>
-                        <textarea id="importDataInput" placeholder='{"projects": [...], ...}' style="width: 100%; height: 60px; background: rgba(10, 14, 46, 0.8); border: 1px solid rgba(184, 197, 255, 0.3); color: #e8ecff; padding: 0.5rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem;"></textarea>
-                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-                            <button id="importDataBtn" class="save-button" style="font-size: 0.7rem; padding: 0.4rem 1rem;">Import Data</button>
-                            <button id="resetDraftButton" class="delete-button" style="font-size: 0.7rem; padding: 0.4rem 1rem; background: rgba(248, 113, 113, 0.1); border-color: rgba(248, 113, 113, 0.3);">Reset Draft</button>
-                        </div>
-                    </div>
-                </section>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" value="${links.phone}" onchange="updateLink('phone', this.value)">
             </div>
-
-            <!-- Tab Navigation -->
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="projects">Projects</button>
-                <button class="admin-tab" data-tab="writing">Writing</button>
-                <button class="admin-tab" data-tab="gallery">Gallery</button>
-                <button class="admin-tab" data-tab="bio">Bio</button>
-                <button class="admin-tab" data-tab="links">Links</button>
-                <button class="admin-tab" data-tab="images">Images</button>
+            
+            <div class="form-group">
+                <label>GitHub</label>
+                <input type="url" value="${links.github}" onchange="updateLink('github', this.value)">
             </div>
-
-            <!-- Projects Tab -->
-            <div class="admin-tab-content active" id="projects-tab">
-                <h2>Manage Projects</h2>
-                <div class="projects-editor" id="projectsEditor"></div>
-                <button class="add-button" id="addProjectButton">+ Add Project</button>
-                <button class="save-button" id="saveProjectsButton">Save Changes</button>
-            </div>
-
-            <!-- Writing Tab -->
-            <div class="admin-tab-content" id="writing-tab">
-                <h2>Manage Writing</h2>
-                <div class="writing-editor" id="writingEditor"></div>
-                <button class="add-button" id="addArticleButton">+ Add Article</button>
-                <button class="save-button" id="saveWritingButton">Save Changes</button>
-            </div>
-
-            <!-- Gallery Tab -->
-            <div class="admin-tab-content" id="gallery-tab">
-                <h2>Manage Gallery</h2>
-                <div class="gallery-editor" id="galleryEditor"></div>
-                <button class="save-button" id="saveGalleryButton">Save Changes</button>
-            </div>
-
-            <!-- Bio Tab -->
-            <div class="admin-tab-content" id="bio-tab">
-                <h2>Manage Bio</h2>
-                <div class="editor-item">
-                    <div class="form-group">
-                        <label>Bio Content (HTML)</label>
-                        <textarea id="bioEditor" style="min-height: 400px;"></textarea>
-                    </div>
-                </div>
-                <button class="save-button" id="saveBioButton">Save Changes</button>
-            </div>
-
-            <!-- Links Tab -->
-            <div class="admin-tab-content" id="links-tab">
-                <h2>Manage Links</h2>
-                <div class="links-editor" id="linksEditor"></div>
-                <button class="save-button" id="saveLinksButton">Save Changes</button>
-            </div>
-
-            <!-- Images Tab -->
-            <div class="admin-tab-content" id="images-tab">
-                <h2>Manage Images & Layout</h2>
-                <div class="images-editor">
-                    <div class="editor-item">
-                        <h3>ASCII Border (Left & Right)</h3>
-                        <p style="font-size: 0.85rem; color: #a8b5ff; margin-bottom: 1rem;">Upload a new ASCII art border image (PNG, recommended transparent background)</p>
-                        <input type="file" id="asciiBorderUpload" accept="image/png,image/jpeg" class="file-input">
-                        <button class="save-button" id="updateAsciiBorderButton" style="margin-top: 0.5rem;">Update Border</button>
-                    </div>
-                    <hr style="border: none; border-top: 1px solid rgba(184, 197, 255, 0.15); margin: 2rem 0;">
-                    <div class="editor-item">
-                        <h3>Banner Images</h3>
-                        <p style="font-size: 0.85rem; color: #a8b5ff; margin-bottom: 1rem;">Upload new banner images for desktop view</p>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem;">Left Banner</label>
-                                <input type="file" id="bannerLeftUpload" accept="image/*" class="file-input">
-                                <button class="save-button" id="updateBannerLeftButton" style="margin-top: 0.5rem;">Update</button>
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem;">Right Banner</label>
-                                <input type="file" id="bannerRightUpload" accept="image/*" class="file-input">
-                                <button class="save-button" id="updateBannerRightButton" style="margin-top: 0.5rem;">Update</button>
-                            </div>
-                        </div>
-                    </div>
-                    <hr style="border: none; border-top: 1px solid rgba(184, 197, 255, 0.15); margin: 2rem 0;">
-                    <div class="editor-item">
-                        <h3>Layout Settings</h3>
-                        <div class="form-group">
-                            <label>ASCII Border Width (px)</label>
-                            <input type="number" id="borderWidthInput" min="80" max="200" value="140" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label>ASCII Border Opacity (0-1)</label>
-                            <input type="number" id="borderOpacityInput" min="0" max="1" step="0.1" value="1" class="form-input">
-                        </div>
-                        <button class="save-button" id="saveLayoutButton">Save Layout Settings</button>
-                    </div>
-                </div>
+            
+            <div class="form-group">
+                <label>LinkedIn</label>
+                <input type="url" value="${links.linkedin}" onchange="updateLink('linkedin', this.value)">
             </div>
         </div>
-    </div>
+    `;
+}
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/admin.js"></script>
-    <script src="js/admin-images.js"></script>
-</body>
-</html>
+function updateLink(field, value) {
+    const links = DataManager.getLinks();
+    links[field] = value;
+    DataManager.saveLinks(links);
+}
+
+document.getElementById('saveLinksButton')?.addEventListener('click', () => {
+    alert('Links saved!');
+});
+
+// ============================================================================
+// PUBLISHING
+// ============================================================================
+
+const publishButton = document.getElementById('publishButton');
+const publishStatus = document.getElementById('publishStatus');
+const githubTokenInput = document.getElementById('githubToken');
+
+// Replace this with your actual PAT in the browser, but NEVER commit it!
+const GITHUB_TOKEN = ""; 
+
+if (publishButton) {
+    publishButton.addEventListener('click', async () => {
+        const token = githubTokenInput.value.trim() || GITHUB_TOKEN;
+        if (!token) {
+            alert('Please enter your GitHub Personal Access Token first.');
+            githubTokenInput.focus();
+            return;
+        }
+
+        publishButton.disabled = true;
+        publishButton.textContent = 'PUBLISHING...';
+        publishStatus.textContent = 'Connecting to GitHub...';
+        publishStatus.style.color = '#b8c5ff';
+
+        try {
+            const repoOwner = 'MARS-011';
+            const repoName = 'jackson-marshall-portfolio';
+            
+            await DataManager.publishToGitHub(token, repoOwner, repoName);
+            
+            publishStatus.textContent = 'SUCCESS: Content published to GitHub! Site will rebuild in 1-2 minutes.';
+            publishStatus.style.color = '#4ade80';
+            alert('Changes published successfully! GitHub Pages will rebuild automatically.');
+        } catch (error) {
+            publishStatus.textContent = `ERROR: ${error.message}`;
+            publishStatus.style.color = '#f87171';
+            alert(`Publish failed: ${error.message}`);
+        } finally {
+            publishButton.disabled = false;
+            publishButton.textContent = 'PUBLISH TO GITHUB';
+        }
+    });
+}
+
+const importDataBtn = document.getElementById('importDataBtn');
+const importDataInput = document.getElementById('importDataInput');
+
+if (importDataBtn) {
+    importDataBtn.addEventListener('click', () => {
+        const raw = importDataInput.value.trim();
+        if (!raw) return;
+        
+        try {
+            const data = JSON.parse(raw);
+            // Verify structure
+            if (!data.projects || !data.writing) {
+                throw new Error('Invalid data structure. Missing projects or writing.');
+            }
+            
+            // Save to draft
+            localStorage.setItem('jackson_portfolio_data_draft', raw);
+            alert('Data imported to local draft! Refreshing page...');
+            window.location.reload();
+        } catch (error) {
+            alert('Import failed: ' + error.message);
+        }
+    });
+}
+
+const resetDraftButton = document.getElementById('resetDraftButton');
+if (resetDraftButton) {
+    resetDraftButton.addEventListener('click', async () => {
+        if (confirm('This will delete all your unsaved changes and reload data from GitHub. Continue?')) {
+            await DataManager.initialize(true); // forceRemote = true
+            alert('Draft reset! Data reloaded from GitHub.');
+            window.location.reload();
+        }
+    });
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize DataManager
+    await DataManager.initialize();
+
+    // Check session on page load
+    if (isSessionValid()) {
+        showDashboard();
+    } else {
+        passcodeScreen.style.display = 'block';
+        adminDashboard.style.display = 'none';
+        passcodeInput.focus();
+    }
+});
+
+// Prevent back button after logout
+window.addEventListener('popstate', () => {
+    if (!isSessionValid()) {
+        location.reload();
+    }
+});
+
+console.log('Admin Dashboard — Initialized');
