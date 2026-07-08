@@ -4,6 +4,9 @@
    ============================================================================ */
 
 // Configuration
+// NOTE: this passcode is a soft UX gate only (visible in page source), not real
+// security. The actual write-access boundary is the GitHub Personal Access
+// Token required below to publish — nothing is written without that.
 const ADMIN_PASSCODE = '2024';
 const SESSION_KEY = 'admin_session';
 const SESSION_DURATION = 3600000; // 1 hour in milliseconds
@@ -154,7 +157,7 @@ function renderProjectsEditor() {
             <div class="form-group">
                 <label>Preview Image URL (Appears under description)</label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or Base64">
+                    <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or upload a file →">
                     <input type="file" accept="image/*" onchange="handleSingleUpload(this, (val) => updateProjectField(${project.id}, 'previewImage', val))" style="width: auto;">
                 </div>
             </div>
@@ -221,22 +224,38 @@ function updateProjectField(id, field, value) {
     renderProjectsEditor();
 }
 
+function getUploadToken() {
+    const token = (githubTokenInput?.value || '').trim() || GITHUB_TOKEN;
+    if (!token) {
+        alert('Please enter your GitHub Personal Access Token first (needed to upload images to the repo).');
+        githubTokenInput?.focus();
+        return null;
+    }
+    return token;
+}
+
 async function handleSingleUpload(input, callback) {
     const file = input.files[0];
-    if (file) {
-        try {
-            const base64 = await convertToBase64(file);
-            callback(base64);
-            renderProjectsEditor();
-        } catch (error) {
-            console.error('Error uploading file:', error);
-        }
+    if (!file) return;
+    const token = getUploadToken();
+    if (!token) return;
+
+    try {
+        showSyncIndicator();
+        const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio');
+        callback(path);
+        renderProjectsEditor();
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        alert(`Image upload failed: ${error.message}`);
     }
 }
 
 async function handlePhotoUpload(projectId, input) {
     const files = Array.from(input.files);
     if (files.length === 0) return;
+    const token = getUploadToken();
+    if (!token) return;
 
     const projects = DataManager.getProjects();
     const project = projects.find(p => p.id === projectId);
@@ -246,10 +265,11 @@ async function handlePhotoUpload(projectId, input) {
 
     for (const file of files) {
         try {
-            const base64 = await convertToBase64(file);
-            newPhotos.push({ url: base64, size: '100%' });
+            const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio', 'assets/images/projects');
+            newPhotos.push({ url: path, size: '100%' });
         } catch (error) {
-            console.error('Error converting file:', error);
+            console.error('Error uploading file:', error);
+            alert(`Image upload failed for ${file.name}: ${error.message}`);
         }
     }
 
@@ -283,15 +303,6 @@ function removeProjectPhoto(projectId, photoIndex) {
     renderProjectsEditor();
 }
 
-function convertToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-}
-
 function deleteProject(id) {
     if (confirm('Delete this project?')) {
         DataManager.deleteProject(id);
@@ -306,7 +317,7 @@ document.getElementById('addProjectButton')?.addEventListener('click', () => {
 		        fullDescription: 'Full project description',
                 previewImage: '',
 		        stack: ['Tech1', 'Tech2'],
-		        github: 'https://github.com',
+		        github: '',
 	            links: [],
 	            photos: []
 		    };
@@ -406,20 +417,25 @@ function triggerGalleryUpload(id) {
     document.getElementById(`gallery-input-${id}`).click();
 }
 
-function handleGalleryUpload(id, event) {
+async function handleGalleryUpload(id, event) {
     const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const gallery = DataManager.getGallery();
-            const item = gallery.find(g => g.id === id);
-            if (item) {
-                item.imagePath = e.target.result;
-                DataManager.saveGallery(gallery);
-                renderGalleryEditor();
-            }
-        };
-        reader.readAsDataURL(file);
+    if (!file) return;
+    const token = getUploadToken();
+    if (!token) return;
+
+    try {
+        showSyncIndicator();
+        const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio', 'assets/images/gallery');
+        const gallery = DataManager.getGallery();
+        const item = gallery.find(g => g.id === id);
+        if (item) {
+            item.imagePath = path;
+            DataManager.saveGallery(gallery);
+            renderGalleryEditor();
+        }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        alert(`Image upload failed: ${error.message}`);
     }
 }
 
