@@ -48,47 +48,9 @@
 
         <!-- Gallery Grid -->
         <section class="gallery-container">
-            <div class="gallery-grid">
-                <!-- Placeholder Renders -->
-                <div class="gallery-item" data-render-id="01">
-                    <div class="gallery-placeholder">[RENDER_01]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="02">
-                    <div class="gallery-placeholder">[RENDER_02]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="03">
-                    <div class="gallery-placeholder">[RENDER_03]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="04">
-                    <div class="gallery-placeholder">[RENDER_04]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="05">
-                    <div class="gallery-placeholder">[RENDER_05]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="06">
-                    <div class="gallery-placeholder">[RENDER_06]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="07">
-                    <div class="gallery-placeholder">[RENDER_07]</div>
-                    <p class="gallery-caption"></p>
-                </div>
-
-                <div class="gallery-item" data-render-id="08">
-                    <div class="gallery-placeholder">[RENDER_08]</div>
-                    <p class="gallery-caption"></p>
-                </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery items will be injected by gallery.js -->
+                <div class="loading-placeholder">[LOADING_GALLERY_DATA...]</div>
             </div>
         </section>
     </div>
@@ -97,9 +59,9 @@
     <div class="lightbox" id="lightbox">
         <div class="lightbox-overlay"></div>
         <div class="lightbox-content">
-            <button class="lightbox-close">×</button>
-            <img class="lightbox-image" src="" alt="">
-            <p class="lightbox-caption"></p>
+            <button class="lightbox-close" id="lightboxClose">×</button>
+            <img class="lightbox-image" id="lightboxImage" src="" alt="">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
         </div>
     </div>
 
@@ -109,11 +71,5 @@
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
     <script src="js/data.js"></script>
     <script src="js/gallery.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            await DataManager.initialize();
-            if (typeof renderGallery === 'function') renderGallery();
-        });
-    </script>
 </body>
 </html>

@@ -155,7 +155,7 @@ function openProjectDetail(project) {
                     <img src="${String(project.previewImage)}" alt="${project.name} Preview" style="width: 100%; max-width: 1000px; border: 1px solid rgba(184, 197, 255, 0.2); display: block; margin: 0 auto;">
                 </div>
             ` : ''}
-            <div class="detail-description">${formatText(project.fullDescription)}</div>
+            <div class="detail-description">${DataManager.formatText(project.fullDescription)}</div>
         </div>
 
         ${project.photos && project.photos.length > 0 ? `
@@ -209,10 +209,7 @@ function openProjectDetail(project) {
     overlay.style.pointerEvents = 'auto';
 }
 
-function formatText(text) {
-    if (!text) return '';
-    return text.split('\n').map(line => `<p>${line}</p>`).join('');
-}
+
 
 function closeProjectDetail() {
     gsap.to(overlay, { 

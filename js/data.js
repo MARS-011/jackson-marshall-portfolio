@@ -158,7 +158,19 @@ const DataManager = (() => {
         saveDraft();
     }
 
+    // Global utility for text formatting (line breaks to paragraphs)
+    function formatText(text) {
+        if (!text) return '';
+        if (text.includes('<p>') || text.includes('<div')) return text; // Already HTML
+        return text.split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => `<p>${line}</p>`)
+            .join('');
+    }
+
     return {
+        formatText,
         initialize,
         getAllData,
         publishToGitHub,

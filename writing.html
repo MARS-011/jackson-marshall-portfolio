@@ -48,44 +48,20 @@
 
         <!-- Articles List -->
         <section class="writing-container">
-            <div class="articles-list">
-                <!-- Article 1: Generative Systems -->
-                <article class="article-item" data-article-id="1">
-                    <div class="article-meta">
-                        <h3 class="article-title">Generative Systems and Emergent Complexity</h3>
-                        <p class="article-date">June 15, 2024</p>
-                    </div>
-                    <p class="article-summary">Exploring how simple rules and iterative processes create intricate patterns, from particle physics to organizational design.</p>
-                </article>
-
-                <!-- Article 2: Co-op Reflections -->
-                <article class="article-item" data-article-id="2">
-                    <div class="article-meta">
-                        <h3 class="article-title">Engineering Co-op: Lessons in Process Optimization</h3>
-                        <p class="article-date">May 28, 2024</p>
-                    </div>
-                    <p class="article-summary">Reflections from four months in industry: what academic theory doesn't teach you about real-world problem-solving and team dynamics.</p>
-                </article>
-
-                <!-- Article 3: Soap Chemistry -->
-                <article class="article-item" data-article-id="3">
-                    <div class="article-meta">
-                        <h3 class="article-title">The Chemistry of Soap: Saponification and Molecular Design</h3>
-                        <p class="article-date">April 10, 2024</p>
-                    </div>
-                    <p class="article-summary">A deep dive into the chemistry of soap production, surfactant behavior, and the surprising elegance of amphiphilic molecules.</p>
-                </article>
+            <div class="articles-list" id="articlesList">
+                <!-- Articles will be injected by writing.js -->
+                <div class="loading-placeholder">[LOADING_WRITING_DATA...]</div>
             </div>
         </section>
     </div>
 
     <!-- Reading View Modal -->
     <div class="reading-view" id="readingView">
-        <div class="reading-close">×</div>
+        <div class="reading-close" id="readingClose">×</div>
         <article class="reading-content">
-            <h1 class="reading-title"></h1>
-            <p class="reading-date"></p>
-            <div class="reading-body"></div>
+            <h1 class="reading-title" id="readingTitle"></h1>
+            <p class="reading-date" id="readingDate"></p>
+            <div class="reading-body" id="readingBody"></div>
         </article>
     </div>
 
@@ -95,11 +71,5 @@
     <script src="https://cdn.jsdelivr.net/gh/darkroomengineering/lenis@latest/bundled/lenis.js"></script>
     <script src="js/data.js"></script>
     <script src="js/writing.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            await DataManager.initialize();
-            if (typeof renderWriting === 'function') renderWriting();
-        });
-    </script>
 </body>
 </html>

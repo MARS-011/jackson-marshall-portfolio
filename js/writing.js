@@ -88,11 +88,7 @@ const readingTitle  = document.getElementById('readingTitle');
 const readingDate   = document.getElementById('readingDate');
 const readingBody   = document.getElementById('readingBody');
 
-function formatText(text) {
-    if (!text) return '';
-    if (text.includes('<p>') || text.includes('<div')) return text; // Already HTML
-    return text.split('\n').map(line => `<p>${line.trim()}</p>`).filter(p => p !== '<p></p>').join('');
-}
+
 
 function openReadingView(articleId) {
     const article = DataManager.getWriting().find(a => String(a.id) === String(articleId));
@@ -100,7 +96,7 @@ function openReadingView(articleId) {
 
     readingTitle.textContent = article.title;
     readingDate.textContent  = article.date;
-    readingBody.innerHTML    = formatText(article.content);
+    readingBody.innerHTML    = DataManager.formatText(article.content);
 
     readingView.style.pointerEvents = 'auto';
     gsap.to(readingView, { opacity: 1, duration: 0.3, ease: 'power2.out' });
