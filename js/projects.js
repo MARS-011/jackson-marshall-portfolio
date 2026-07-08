@@ -80,7 +80,7 @@ function initializeCardAnimations() {
                         </div>
                     ` : ''}
 
-                    <a href="${project.github}" class="github-link" target="_blank">View on GitHub →</a>
+                    ${project.github ? `<a href="${project.github}" class="github-link" target="_blank">View on GitHub →</a>` : ''}
                 </div>
             </div>
         `).join('');
@@ -176,10 +176,11 @@ function openProjectDetail(project) {
         <div class="detail-links-section">
             <h4 class="section-label">Project Assets & Links</h4>
             <div class="detail-links-grid">
+                ${project.github ? `
                 <a href="${project.github}" class="detail-link-card" target="_blank">
                     <span class="link-label">Source Code</span>
                     <span class="link-url">GitHub Repository →</span>
-                </a>
+                </a>` : ''}
                 ${(project.links || []).map(link => `
                     <a href="${link.url}" class="detail-link-card" target="_blank">
                         <span class="link-label">External Resource</span>
