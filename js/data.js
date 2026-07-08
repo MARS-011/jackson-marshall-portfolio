@@ -48,6 +48,50 @@ const DataManager = (() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedData));
     }
 
+    // Upload an image file to the repo (as its own file) via GitHub Contents API,
+    // instead of embedding it as base64 inside content.json. Keeps content.json
+    // small and fast to load, and avoids the ~1MB GitHub API single-file limit.
+    // Returns the relative path (e.g. "assets/images/uploads/1699999999-photo.jpg")
+    // to store in content.json.
+    async function uploadImageToGitHub(file, token, repoOwner, repoName, folder = 'assets/images/uploads') {
+        if (!token) throw new Error('GitHub Token is required for image upload');
+
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const path = `${folder}/${Date.now()}-${safeName}`;
+        const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`;
+
+        const base64Content = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                // reader.result is "data:image/png;base64,AAAA..." — strip the prefix
+                const commaIndex = reader.result.indexOf(',');
+                resolve(reader.result.slice(commaIndex + 1));
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+
+        const putResponse = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: `Upload image ${safeName}`,
+                content: base64Content,
+            })
+        });
+
+        if (!putResponse.ok) {
+            const errorData = await putResponse.json();
+            throw new Error(errorData.message || 'Failed to upload image to GitHub');
+        }
+
+        // Relative path works both on GitHub Pages and locally alongside index.html
+        return path;
+    }
+
     // GitHub Publishing Logic
     async function publishToGitHub(token, repoOwner, repoName) {
         if (!token) throw new Error('GitHub Token is required for publishing');
@@ -162,6 +206,7 @@ const DataManager = (() => {
         initialize,
         getAllData,
         publishToGitHub,
+        uploadImageToGitHub,
         getProjects,
         getWriting,
         getGallery,
