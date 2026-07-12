@@ -1,6 +1,55 @@
 {
     "projects": [
         {
+            "id": 2,
+            "name": "D&D Toolset",
+            "description": "Web-based tools for Dungeons & Dragons campaign management and character creation.",
+            "fullDescription": "Comprehensive toolset for D&D players and dungeon masters. Includes character builders, spell databases, encounter generators, and campaign tracking features.",
+            "stack": [
+                "React",
+                "JavaScript",
+                "Firebase"
+            ],
+            "github": "https://github.com/MARS-011",
+            "previewImage": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+            "links": [],
+            "photos": []
+        },
+        {
+            "id": 7,
+            "name": "Orbis Generative Art",
+            "previewImage": "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=80",
+            "description": "The procedural particle system uses equations to draw cosmic shapes and then animate them",
+            "fullDescription": "This project explores the emerging complexity and entropy of systems in beautiful mathematical ways.\n\n The math layout is as follows:\n\n pick an arbitrary starting point s\u2080 in \u211d\u00b2. The first ~20 iterations get discarded because you're not yet on the attractor \u2014 you're just letting the chaos game \\\"settle in.\\\"\\n\\n2 \n At each iteration, the program randomly picks one of N weighted transform functions f\u1d62 and applies it: s\u2c7c = f\u1d62(s\u2c7c\u208b\u2081). Each function is an affine transform of the form F(x,y) = (ax + by + c, dx + ey + f). This controls the rotation, scaling, and shear from a 6-parameter matrix \n\n The nonlinear variation functions this causes the divergence from the main paths and the quote streakiness. Applying one or more nonlinear variations V\u2099(x,y) gives other effects to it.\n\n Log-density accumulation. Instead of plotting each point directly, you maintain a histogram: each pixel keeps a hit count. You run millions of iterations and accumulate. The flame algorithm solves the problem of high-density areas clipping by using a logarithmic map from density to brightness, so brightness = log(hit_count).\n\nlastly is the filters and colouring over it, which is just changing the colours, but it does make them look very cool.",
+            "stack": [
+                "Three.js",
+                "JavaScript",
+                "WebGL"
+            ],
+            "github": "https://github.com/MARS-011",
+            "links": [],
+            "photos": [
+                "assets/images/projects/orbis-generative-art-photo-1.png"
+            ]
+        },
+        {
+            "name": "Easel",
+            "description": "A custom CNC-engraved wooden easel",
+            "fullDescription": "This project was the most complex thing I had ever made at the time, and so the first step was to model the entire thing in Blender. You may ask \" ??? Why Blender of all programs? The main reason is the ability to use SVG as UV maps to make variable height engravings and then export them to Fusion for tool paths and then G code. ( see Image 1)\n\nAfter I had my models and tool path, I then had to wrangle with the awful thing that is Home Depot lumber. Warped and prone to splitting, it took many hours to get things planed down and attached fully straight. (See Image 2)\n\nNext came the CNC. I couldn't just engrave the long parts as they were too long to fit into the machine, and if I messed up once Id have to create an entire new part. The solution to this is engraved panels; this way, I could make a bunch of uniform ones and throw away the ones that I needed to zero in my cuts. Although taking more tries than I thought it got it down to a science and had over 20 nearly identical engraved panels. (see Images 3 and 4)\n\nAfter this, I realized you couldn't see the engraving very much as it didn't contrast with the wood around it. I applied a coat of lacquer over them all and then used a hand plane to remove the coat from the top, leaving only the sunken area coloured. (See Image 5)\n\nI did the same process for the base to hold the painting, only I had one attempt at the CNC, and I got it. Only after did my hubris kick in, and I decided I wanted to go just a smidge deeper. To my horror, when I returned a second time, it had all been shifted 3cm left. But it was still salvageable, and as I stared at it more and more, I realized it looked.... good. So quickly I covered the top in resin this time, let it dry, planed it off, and wow, it looks phenomenal. My mistake had been remedied. ( See Image 6)\n\nAll that was left was assembly, and when all put together, you get this ( See Image 7)",
+            "stack": [
+                "Blender",
+                "Fusion"
+            ],
+            "github": "",
+            "links": [],
+            "photos": [
+                "assets/images/projects/easel-photo-3.png",
+                "assets/images/projects/easel-photo-4.jpg"
+            ],
+            "id": 8,
+            "previewImage": "assets/images/projects/easel-preview-2.png"
+        },
+        {
             "name": "New Project",
             "description": "Project description",
             "fullDescription": "Full project description",
@@ -12,7 +61,7 @@
             "github": "",
             "links": [],
             "photos": [],
-            "id": 1
+            "id": 9
         }
     ],
     "writing": [],
