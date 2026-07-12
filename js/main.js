@@ -64,7 +64,7 @@ function loadDynamicContent() {
             <article class="project-card" style="cursor: pointer;" onclick="window.location.href='projects.html?id=${project.id}'">
                 ${project.previewImage ? `
                     <div class="project-card-preview">
-                        <img src="${project.previewImage}" alt="${project.name}">
+                        <img src="${project.previewImage}" alt="${project.name}" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
                     </div>
                 ` : ''}
                 <div class="project-card-content">

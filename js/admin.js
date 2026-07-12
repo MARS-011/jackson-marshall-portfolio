@@ -160,6 +160,27 @@ function renderProjectsEditor() {
                     <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or upload a file →">
                     <input type="file" accept="image/*" onchange="handleSingleUpload(this, (val) => updateProjectField(${project.id}, 'previewImage', val))" style="width: auto;">
                 </div>
+                ${project.previewImage ? `
+                    <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-start;">
+                        <div class="preview-image-crop-box" style="width: 160px; height: 90px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); border-radius: 2px; flex-shrink: 0;">
+                            <img src="${project.previewImage}" style="width: 100%; height: 100%; object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'}; display: block;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label style="margin: 0;">Fit
+                                <select onchange="updateProjectField(${project.id}, 'previewImageFit', this.value)" style="margin-left: 6px;">
+                                    <option value="cover" ${(!project.previewImageFit || project.previewImageFit === 'cover') ? 'selected' : ''}>Cover (fill, crop edges)</option>
+                                    <option value="contain" ${project.previewImageFit === 'contain' ? 'selected' : ''}>Contain (show whole image)</option>
+                                </select>
+                            </label>
+                            <label style="margin: 0;">Focal Point
+                                <select onchange="updateProjectField(${project.id}, 'previewImagePosition', this.value)" style="margin-left: 6px;" ${project.previewImageFit === 'contain' ? 'disabled' : ''}>
+                                    ${['center center','top center','bottom center','center left','center right','top left','top right','bottom left','bottom right'].map(pos => `<option value="${pos}" ${(project.previewImagePosition || 'center center') === pos ? 'selected' : ''}>${pos.replace(' ', ' / ')}</option>`).join('')}
+                                </select>
+                            </label>
+                            <p class="form-hint" style="font-size: 0.7rem; color: #5a6490; margin: 0;">Box on the left previews the actual crop as it'll appear on the homepage/projects cards.</p>
+                        </div>
+                    </div>
+                ` : ''}
             </div>
             
             <div class="form-group">
@@ -316,6 +337,8 @@ document.getElementById('addProjectButton')?.addEventListener('click', () => {
 		        description: 'Project description',
 		        fullDescription: 'Full project description',
                 previewImage: '',
+                previewImageFit: 'cover',
+                previewImagePosition: 'center center',
 		        stack: ['Tech1', 'Tech2'],
 		        github: '',
 	            links: [],
