@@ -88,15 +88,11 @@ function initializeCardAnimations() {
 
     const cards = document.querySelectorAll('.project-card-expandable');
 
-    cards.forEach((card, index) => {
-        gsap.from(card, {
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            delay: 0.4 + index * 0.07,
-            ease: 'power2.out',
-        });
+    if (typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initGridReveal(cards);
+    }
 
+    cards.forEach((card) => {
         card.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') return;
             
@@ -195,6 +191,10 @@ function openProjectDetail(project) {
     overlay.style.display = 'block';
     overlay.scrollTop = 0; // Reset scroll position
     gsap.to(overlay, { opacity: 1, duration: 0.5, ease: 'power2.out' });
+
+    if (typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initMagneticLinks(detailContent);
+    }
     
     // Disable body scroll and stop Lenis
     document.body.classList.add('overlay-open');

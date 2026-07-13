@@ -109,6 +109,12 @@ function loadDynamicContent() {
 
     // Refresh ScrollTrigger after content loads
     ScrollTrigger.refresh();
+
+    // Staggered scroll-in reveal for the project and art grids
+    if (typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initGridReveal('#projectsGrid .project-card');
+        PortfolioEffects.initGridReveal('#artGrid .art-item');
+    }
 }
 
 

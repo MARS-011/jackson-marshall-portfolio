@@ -1045,6 +1045,7 @@ body.overlay-open {
     background: rgba(10, 14, 46, 0.6);
     cursor: pointer;
     transition: border-color 0.3s ease;
+    will-change: transform;
 }
 
 .gallery-item:hover {
@@ -1304,7 +1305,7 @@ body.overlay-open {
 
 
 /* ============================================================================
-   PAGE TRANSITIONS
+   PAGE TRANSITIONS — blinds-style wipe
    ============================================================================ */
 
 .page-transition-overlay {
@@ -1313,16 +1314,28 @@ body.overlay-open {
     background: var(--color-navy);
     z-index: 100000;
     pointer-events: none;
-    opacity: 1;
-    transition: opacity 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    display: flex;
 }
 
-.page-transition-overlay.is-hidden {
-    opacity: 0;
+.pt-strip {
+    flex: 1 0 0;
+    height: 100%;
+    background: var(--color-navy);
+    transform: scaleY(1);
+    will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .page-transition-overlay {
+    .pt-strip {
         transition: none;
     }
+}
+
+/* ============================================================================
+   MAGNETIC LINKS
+   ============================================================================ */
+
+.js-magnetic {
+    display: inline-block;
+    will-change: transform;
 }

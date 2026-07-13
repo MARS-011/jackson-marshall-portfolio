@@ -78,15 +78,12 @@ function applyMasonrySpans() {
 function initializeGalleryHandlers() {
     const galleryItems = document.querySelectorAll('.gallery-item');
 
-    galleryItems.forEach((item, index) => {
-        gsap.from(item, {
-            opacity: 0,
-            y: 20,
-            duration: 0.6,
-            delay: 0.4 + index * 0.07,
-            ease: 'power2.out',
-        });
+    if (typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initGridReveal(galleryItems);
+        PortfolioEffects.initScrollTilt(galleryItems, { rotateX: 12, translateZ: -80 });
+    }
 
+    galleryItems.forEach((item) => {
         item.addEventListener('click', () => {
             const img         = item.querySelector('img');
             const caption     = item.querySelector('.gallery-caption');
