@@ -1306,6 +1306,9 @@ body.overlay-open {
 
 /* ============================================================================
    PAGE TRANSITIONS — blinds-style wipe
+   The opening animation is pure CSS (runs automatically on load, no JS
+   dependency) so a script failure can never leave the screen stuck covered.
+   JS only handles the closing animation before navigating to another page.
    ============================================================================ */
 
 .page-transition-overlay {
@@ -1322,12 +1325,24 @@ body.overlay-open {
     height: 100%;
     background: var(--color-navy);
     transform: scaleY(1);
-    will-change: transform;
+    transform-origin: top;
+    animation: pt-open 0.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    animation-delay: calc(var(--pt-i, 0) * 0.035s);
+}
+
+.pt-strip:nth-child(even) {
+    transform-origin: bottom;
+}
+
+@keyframes pt-open {
+    from { transform: scaleY(1); }
+    to   { transform: scaleY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .pt-strip {
-        transition: none;
+        animation-duration: 0.01s;
+        animation-delay: 0s;
     }
 }
 

@@ -21,16 +21,17 @@ const PortfolioEffects = (function () {
 
     /* ------------------------------------------------------------------
        Blinds-style page transition
-       Covers the viewport with vertical strips, opens on load, closes
-       before navigating to another internal page.
+       Opening is handled entirely by CSS (see styles.css) so it can
+       never get stuck if a script fails. This just builds the strips
+       and handles the closing animation before navigating away.
        ------------------------------------------------------------------ */
     function initPageTransitions() {
         const overlay = document.querySelector('.page-transition-overlay');
-        if (!overlay || typeof gsap === 'undefined') return;
+        if (!overlay) return;
 
         const STRIP_COUNT = 10;
-        const DURATION = prefersReducedMotion ? 0.01 : 0.5;
-        const STAGGER = prefersReducedMotion ? 0 : 0.035;
+        const CLOSE_DURATION_MS = prefersReducedMotion ? 10 : 450;
+        const CLOSE_STAGGER_MS = prefersReducedMotion ? 0 : 30;
 
         let strips = overlay.querySelectorAll('.pt-strip');
         if (!strips.length) {
@@ -38,39 +39,43 @@ const PortfolioEffects = (function () {
             for (let i = 0; i < STRIP_COUNT; i++) {
                 const strip = document.createElement('div');
                 strip.className = 'pt-strip';
-                strip.style.transformOrigin = i % 2 === 0 ? 'top' : 'bottom';
+                strip.style.setProperty('--pt-i', i);
                 frag.appendChild(strip);
             }
             overlay.appendChild(frag);
             strips = overlay.querySelectorAll('.pt-strip');
         }
 
-        function revealPage() {
-            gsap.set(strips, { scaleY: 1 });
-            gsap.to(strips, {
-                scaleY: 0,
-                duration: DURATION,
-                stagger: STAGGER,
-                ease: 'power3.inOut',
-                overwrite: true,
-            });
-        }
+        // Safety net: if the overlay is ever still covering the screen a
+        // couple seconds after load (e.g. the CSS animation somehow didn't
+        // fire), force it out of the way rather than leave the page stuck.
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 2500);
 
-        function coverPage(onComplete) {
-            gsap.to(strips, {
-                scaleY: 1,
-                duration: DURATION,
-                stagger: STAGGER,
-                ease: 'power3.inOut',
-                overwrite: true,
-                onComplete,
-            });
-        }
-
-        revealPage();
+        // Back/forward cache can restore the page mid-close (still covered).
         window.addEventListener('pageshow', (e) => {
-            if (e.persisted) revealPage();
+            if (e.persisted) {
+                strips.forEach((strip) => {
+                    strip.style.transition = 'none';
+                    strip.style.transform = '';
+                    strip.style.animation = 'none';
+                });
+                overlay.style.display = 'none';
+            }
         });
+
+        function closeThenNavigate(href) {
+            strips.forEach((strip, i) => {
+                strip.style.animation = 'none';
+                strip.style.transition = `transform ${CLOSE_DURATION_MS}ms cubic-bezier(0.65, 0, 0.35, 1) ${i * CLOSE_STAGGER_MS}ms`;
+                strip.style.transform = 'scaleY(1)';
+            });
+            const totalWait = CLOSE_DURATION_MS + (strips.length - 1) * CLOSE_STAGGER_MS + 60;
+            setTimeout(() => {
+                window.location.href = href;
+            }, totalWait);
+        }
 
         function isInternalPageLink(link) {
             if (!link || !link.href) return false;
@@ -95,9 +100,8 @@ const PortfolioEffects = (function () {
             if (!isInternalPageLink(link)) return;
 
             e.preventDefault();
-            coverPage(() => {
-                window.location.href = link.href;
-            });
+            overlay.style.display = 'flex';
+            closeThenNavigate(link.href);
         });
     }
 
@@ -165,6 +169,12 @@ const PortfolioEffects = (function () {
                 overwrite: true,
             }),
         });
+
+        // Safety net: force items visible after a few seconds regardless,
+        // in case ScrollTrigger never fires for them (e.g. layout edge case).
+        setTimeout(() => {
+            gsap.to(els, { opacity: 1, y: 0, scale: 1, duration: 0.4, overwrite: 'auto' });
+        }, 4000);
     }
 
     /* ------------------------------------------------------------------
