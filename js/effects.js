@@ -205,11 +205,231 @@ const PortfolioEffects = (function () {
         });
     }
 
+    /* ------------------------------------------------------------------
+       Text reveal — splits a heading into characters or words, then
+       animates them in with a blur/opacity/rise. Fires immediately for
+       page-load headings ('load') or the first time it scrolls into
+       view ('scroll'). Screen readers get the original text via
+       aria-label; the split spans are hidden from them.
+       ------------------------------------------------------------------ */
+    function splitIntoUnits(el, mode) {
+        const text = el.textContent;
+        el.setAttribute('aria-label', text);
+        el.textContent = '';
+
+        const tokens = mode === 'words' ? text.split(/(\s+)/) : text.split('');
+        const frag = document.createDocumentFragment();
+        const units = [];
+
+        tokens.forEach((token) => {
+            const isWhitespace = mode === 'words' ? /^\s+$/.test(token) : token === ' ';
+            if (isWhitespace) {
+                frag.appendChild(document.createTextNode(token));
+                return;
+            }
+            if (!token.length) return;
+            const span = document.createElement('span');
+            span.className = mode === 'words' ? 'tg-word' : 'tg-char';
+            span.textContent = token;
+            span.setAttribute('aria-hidden', 'true');
+            frag.appendChild(span);
+            units.push(span);
+        });
+
+        el.appendChild(frag);
+        return units;
+    }
+
+    function initTextReveal(el, options) {
+        if (!el || typeof gsap === 'undefined') return;
+        if (prefersReducedMotion) return; // leave the plain text intact, no split needed
+
+        const opts = Object.assign({ mode: 'chars', trigger: 'load', delay: 0, stagger: 0.032 }, options);
+        const units = splitIntoUnits(el, opts.mode);
+        if (!units.length) return;
+
+        gsap.set(units, { opacity: 0, y: '0.55em', filter: 'blur(6px)' });
+
+        const reveal = () => {
+            gsap.to(units, {
+                opacity: 1,
+                y: '0em',
+                filter: 'blur(0px)',
+                duration: 0.9,
+                delay: opts.delay,
+                stagger: opts.stagger,
+                ease: 'power3.out',
+                overwrite: true,
+            });
+        };
+
+        if (opts.trigger === 'scroll' && typeof ScrollTrigger !== 'undefined') {
+            ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: reveal });
+        } else {
+            reveal();
+        }
+
+        // Safety net: if a trigger somehow never fires, don't leave the
+        // heading permanently invisible.
+        setTimeout(() => {
+            gsap.to(units, { opacity: 1, y: '0em', filter: 'blur(0px)', duration: 0.4, overwrite: 'auto' });
+        }, 5000);
+    }
+
+    /* ------------------------------------------------------------------
+       3D card tilt — mouse-tracked perspective tilt with a cursor-lit
+       glare. Desktop / fine-pointer only; the parent grid needs
+       `perspective` set in CSS for the tilt to read as 3D.
+       ------------------------------------------------------------------ */
+    function initCardTilt3D(selector, options) {
+        if (!supportsFinePointer || prefersReducedMotion || typeof gsap === 'undefined') return;
+
+        const cards = gsap.utils.toArray(selector);
+        if (!cards.length) return;
+
+        const opts = Object.assign({ maxTilt: 9, liftScale: 1.015 }, options);
+
+        cards.forEach((card) => {
+            if (card.dataset.tiltBound) return;
+            card.dataset.tiltBound = 'true';
+            card.classList.add('js-tilt-card');
+
+            const glare = document.createElement('div');
+            glare.className = 'card-glare';
+            glare.setAttribute('aria-hidden', 'true');
+            card.appendChild(glare);
+
+            const rotateXTo = gsap.quickTo(card, 'rotateX', { duration: 0.5, ease: 'power3.out' });
+            const rotateYTo = gsap.quickTo(card, 'rotateY', { duration: 0.5, ease: 'power3.out' });
+            const scaleTo = gsap.quickTo(card, 'scale', { duration: 0.5, ease: 'power3.out' });
+
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const px = (e.clientX - rect.left) / rect.width;
+                const py = (e.clientY - rect.top) / rect.height;
+
+                rotateXTo((0.5 - py) * opts.maxTilt);
+                rotateYTo((px - 0.5) * opts.maxTilt);
+                scaleTo(opts.liftScale);
+
+                glare.style.setProperty('--mx', `${px * 100}%`);
+                glare.style.setProperty('--my', `${py * 100}%`);
+                glare.style.opacity = '1';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                rotateXTo(0);
+                rotateYTo(0);
+                scaleTo(1);
+                glare.style.opacity = '0';
+            });
+        });
+    }
+
+    /* ------------------------------------------------------------------
+       Sparkles — a quiet, ambient canvas starfield confined to a single
+       container (the hero). Drifts and twinkles slowly; pauses when
+       off-screen or the tab is hidden so it never costs anything the
+       viewer isn't looking at.
+       ------------------------------------------------------------------ */
+    function initSparkles(container, options) {
+        if (!container || prefersReducedMotion) return;
+
+        const opts = Object.assign({ density: 60, color: '184, 197, 255' }, options);
+        const canvas = document.createElement('canvas');
+        canvas.className = 'sparkles-canvas';
+        canvas.setAttribute('aria-hidden', 'true');
+        container.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+
+        let width = 0, height = 0, dpr = 1, particles = [], running = false, rafId = null;
+
+        function makeParticle() {
+            return {
+                x: Math.random() * width,
+                y: Math.random() * height,
+                r: Math.random() * 1.1 + 0.3,
+                baseAlpha: Math.random() * 0.5 + 0.15,
+                phase: Math.random() * Math.PI * 2,
+                speed: Math.random() * 0.12 + 0.03,
+                drift: (Math.random() - 0.5) * 0.05,
+            };
+        }
+
+        function seed() {
+            const area = width * height;
+            const count = Math.max(20, Math.min(opts.density, Math.round(area / 14000)));
+            particles = new Array(count).fill(0).map(makeParticle);
+        }
+
+        function resize() {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            width = container.clientWidth;
+            height = container.clientHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            seed();
+        }
+
+        function tick(t) {
+            if (!running) return;
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach((p) => {
+                p.y -= p.speed;
+                p.x += p.drift;
+                if (p.y < -4) { p.y = height + 4; p.x = Math.random() * width; }
+                if (p.x < -4) p.x = width + 4;
+                if (p.x > width + 4) p.x = -4;
+
+                const twinkle = (Math.sin(t * 0.0016 + p.phase) + 1) / 2;
+                const alpha = p.baseAlpha * (0.35 + 0.65 * twinkle);
+
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(${opts.color}, ${alpha.toFixed(3)})`;
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function start() {
+            if (running) return;
+            running = true;
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function stop() {
+            running = false;
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+
+        resize();
+        start();
+
+        window.addEventListener('resize', resize);
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? stop() : start();
+        });
+
+        if ('IntersectionObserver' in window) {
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => (entry.isIntersecting ? start() : stop()));
+            }, { threshold: 0 });
+            io.observe(container);
+        }
+
+        return { start, stop, resize };
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         initGrain();
         initPageTransitions();
         initMagneticLinks();
     });
 
-    return { initMagneticLinks, initGridReveal, initScrollTilt };
+    return { initMagneticLinks, initGridReveal, initScrollTilt, initTextReveal, initCardTilt3D, initSparkles };
 })();

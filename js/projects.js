@@ -90,6 +90,7 @@ function initializeCardAnimations() {
 
     if (typeof PortfolioEffects !== 'undefined') {
         PortfolioEffects.initGridReveal(cards);
+        PortfolioEffects.initCardTilt3D('.project-card-expandable');
     }
 
     cards.forEach((card) => {
@@ -252,10 +253,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const pageTitle    = document.querySelector('.page-title');
     const pageSubtitle = document.querySelector('.page-subtitle');
-    if (pageTitle && pageSubtitle) {
-        gsap.from([pageTitle, pageSubtitle], {
-            opacity: 0, y: 20, duration: 0.8, delay: 0.3, stagger: 0.15, ease: 'power2.out'
-        });
+    if (pageSubtitle) {
+        gsap.from(pageSubtitle, { opacity: 0, y: 20, duration: 0.8, delay: 0.55, ease: 'power2.out' });
+    }
+    if (pageTitle && typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initTextReveal(pageTitle, { mode: 'chars', trigger: 'load', delay: 0.25, stagger: 0.03 });
     }
 
     console.log('Projects Page — Initialized');

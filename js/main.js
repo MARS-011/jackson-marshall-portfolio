@@ -114,6 +114,7 @@ function loadDynamicContent() {
     if (typeof PortfolioEffects !== 'undefined') {
         PortfolioEffects.initGridReveal('#projectsGrid .project-card');
         PortfolioEffects.initGridReveal('#artGrid .art-item');
+        PortfolioEffects.initCardTilt3D('#projectsGrid .project-card');
     }
 }
 
@@ -127,14 +128,16 @@ function initAnimations() {
     const heroTitle = document.querySelector('.hero-title');
     const heroSubtitle = document.querySelector('.hero-subtitle');
 
-    if (heroTitle && heroSubtitle) {
-        gsap.from([heroTitle, heroSubtitle], {
-            opacity: 0,
-            y: 30,
-            duration: 0.8,
-            delay: 0.5,
-            stagger: 0.2,
-            ease: 'power2.out',
+    if (heroSubtitle) {
+        gsap.from(heroSubtitle, { opacity: 0, y: 20, duration: 0.8, delay: 0.9, ease: 'power2.out' });
+    }
+    if (heroTitle && typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initTextReveal(heroTitle, { mode: 'chars', trigger: 'load', delay: 0.3, stagger: 0.035 });
+    }
+
+    if (typeof PortfolioEffects !== 'undefined') {
+        document.querySelectorAll('.section-title').forEach((title) => {
+            PortfolioEffects.initTextReveal(title, { mode: 'words', trigger: 'scroll', stagger: 0.06 });
         });
     }
 
@@ -188,5 +191,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     await DataManager.initialize();
     loadDynamicContent();
     initAnimations();
+    if (typeof PortfolioEffects !== 'undefined') {
+        PortfolioEffects.initSparkles(document.querySelector('.hero'));
+    }
     console.log('Portfolio — Initialized');
 });

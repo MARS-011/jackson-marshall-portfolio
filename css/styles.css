@@ -189,6 +189,13 @@ p {
     line-height: 1.8;
 }
 
+/* Text reveal — per-character / per-word spans, see js/effects.js */
+.tg-char,
+.tg-word {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+}
+
 /* ============================================================================
    HERO SECTION
    ============================================================================ */
@@ -207,6 +214,8 @@ p {
 .hero-content {
     max-width: 900px;
     opacity: 1;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-title {
@@ -335,6 +344,7 @@ p {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: 2rem;
+    perspective: 1400px;
 }
 
 .project-card {
@@ -549,6 +559,7 @@ p {
     padding: 0 6rem 8rem;
     padding-left: calc(120px + 4rem);
     padding-right: calc(120px + 4rem);
+    perspective: 1400px;
 }
 
 .project-card-expandable {
@@ -1353,4 +1364,53 @@ body.overlay-open {
 .js-magnetic {
     display: inline-block;
     will-change: transform;
+}
+
+/* ============================================================================
+   3D CARD TILT + GLARE
+   ============================================================================ */
+
+.js-tilt-card {
+    position: relative;
+    transform-style: flat;
+    will-change: transform;
+}
+
+.card-glare {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+        circle at var(--mx, 50%) var(--my, 50%),
+        rgba(var(--color-lavender-rgb), 0.16),
+        transparent 55%
+    );
+}
+
+/* ============================================================================
+   SPARKLES — ambient hero starfield
+   ============================================================================ */
+
+.sparkles-canvas {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sparkles-canvas {
+        display: none;
+    }
+
+    .tg-char,
+    .tg-word {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+    }
 }
