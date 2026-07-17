@@ -12,7 +12,12 @@ const DataManager = (() => {
     // Fetch data from content.json
     async function initialize(forceRemote = false) {
         try {
-            const response = await fetch(`${CONTENT_URL}?t=${Date.now()}`); // Cache busting
+            // Cache-bust only when the caller explicitly wants a guaranteed-fresh
+            // copy (e.g. the admin panel discarding a draft). Public pages should
+            // let the browser cache this file normally instead of re-fetching it
+            // on every single navigation.
+            const url = forceRemote ? `${CONTENT_URL}?t=${Date.now()}` : CONTENT_URL;
+            const response = await fetch(url);
             if (!response.ok) throw new Error('Failed to fetch content.json');
             const remoteData = await response.json();
             

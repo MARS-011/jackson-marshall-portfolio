@@ -63,7 +63,7 @@ function loadDynamicContent() {
             <article class="project-card" style="cursor: pointer;" onclick="window.location.href='projects.html?id=${project.id}'">
                 ${project.previewImage ? `
                     <div class="project-card-preview">
-                        <img src="${project.previewImage}" alt="${project.name}" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
+                        <img src="${project.previewImage}" alt="${project.name}" loading="lazy" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
                     </div>
                 ` : ''}
                 <div class="project-card-content">
@@ -84,7 +84,7 @@ function loadDynamicContent() {
         if (artItems.length > 0) {
             artGrid.innerHTML = artItems.map(item => `
                 <div class="art-item">
-                    <img src="${item.imagePath}" alt="${item.caption || 'Render'}">
+                    <img src="${item.imagePath}" alt="${item.caption || 'Render'}" loading="lazy">
                     ${item.caption ? `<p class="art-caption">${item.caption}</p>` : ''}
                 </div>
             `).join('');

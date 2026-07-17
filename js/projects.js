@@ -38,7 +38,7 @@ function initializeCardAnimations() {
                 <div class="card-front">
                     ${project.previewImage ? `
                         <div class="project-card-preview">
-                            <img src="${project.previewImage}" alt="${project.name}" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
+                            <img src="${project.previewImage}" alt="${project.name}" loading="lazy" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
                         </div>
                     ` : ''}
                     <div class="project-card-content">
@@ -70,7 +70,7 @@ function initializeCardAnimations() {
                             <h4 class="section-label">Photos (${project.photos.length})</h4>
                             <div class="photos-slider-container">
                                 <div class="photos-slider">
-                                    ${project.photos.map(photo => `<img src="${photo}" alt="${project.name}" class="project-photo-slide">`).join('')}
+                                    ${project.photos.map(photo => `<img src="${photo}" alt="${project.name}" class="project-photo-slide" loading="lazy">`).join('')}
                                 </div>
                                 ${project.photos.length > 1 ? `
                                     <div class="slider-hint">Scroll for more →</div>
@@ -162,7 +162,7 @@ function openProjectDetail(project) {
                     const size = isObject ? photo.size || '100%' : '100%';
                     return `
                         <div class="detail-photo-item" style="width: ${size}; margin: 0 auto;">
-                            <img src="${src}" alt="${project.name}" style="width: 100%; display: block;">
+                            <img src="${src}" alt="${project.name}" style="width: 100%; display: block;" loading="lazy">
                         </div>
                     `;
                 }).join('')}
