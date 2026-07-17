@@ -190,6 +190,10 @@ p {
 }
 
 /* Text reveal — per-character / per-word spans, see js/effects.js */
+.tg-word-wrap {
+    display: inline-block;
+}
+
 .tg-char,
 .tg-word {
     display: inline-block;
@@ -571,7 +575,6 @@ p {
     cursor: pointer;
     transition: border-color 0.3s ease;
     min-height: 200px;
-    perspective: 1000px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -581,39 +584,8 @@ p {
     border-color: rgba(var(--color-lavender-rgb), 0.3);
 }
 
-.card-front {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.card-front .project-card-content {
-    padding: 2rem;
-}
-
-.card-back {
-    padding: 2rem;
-}
-
-.card-front .project-card-preview {
+.project-card-expandable .project-card-preview {
     height: 160px;
-}
-
-.card-front,
-.card-back {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.card-back {
-    display: none;
-}
-
-.project-card-expandable.flipped .card-front {
-    display: none;
-}
-
-.project-card-expandable.flipped .card-back {
-    display: block;
 }
 
 .card-title {

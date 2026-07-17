@@ -1,6 +1,7 @@
 /* ============================================================================
    PROJECTS PAGE — JAVASCRIPT
-   Expandable flip cards and Lenis smooth scroll
+   Expandable project cards (click opens a full-detail overlay) and
+   Lenis smooth scroll
    ============================================================================ */
 
 gsap.registerPlugin(ScrollTrigger);
@@ -25,7 +26,7 @@ if (!prefersReducedMotion && !isMobile) {
 }
 
 /* ============================================================================
-   CARD ANIMATIONS & FLIP
+   CARD RENDERING & ANIMATIONS
    ============================================================================ */
 
 function initializeCardAnimations() {
@@ -35,51 +36,17 @@ function initializeCardAnimations() {
     if (projectsGrid) {
         projectsGrid.innerHTML = projects.map(project => `
             <div class="project-card-expandable" data-id="${project.id}">
-                <div class="card-front">
-                    ${project.previewImage ? `
-                        <div class="project-card-preview">
-                            <img src="${project.previewImage}" alt="${project.name}" loading="lazy" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
-                        </div>
-                    ` : ''}
-                    <div class="project-card-content">
-                        <h3 class="card-title">${project.name}</h3>
-                        <p class="card-description">${project.description}</p>
-                        <div class="card-tags">
-                            ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
+                ${project.previewImage ? `
+                    <div class="project-card-preview">
+                        <img src="${project.previewImage}" alt="${project.name}" loading="lazy" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
                     </div>
-                </div>
-                <div class="card-back">
+                ` : ''}
+                <div class="project-card-content">
                     <h3 class="card-title">${project.name}</h3>
-                    <p class="card-full-description">${project.fullDescription}</p>
+                    <p class="card-description">${project.description}</p>
                     <div class="card-tags">
                         ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
                     </div>
-                    
-                    ${project.links && project.links.length > 0 ? `
-                        <div class="project-links">
-                            <h4 class="section-label">Links</h4>
-                            <div class="links-list">
-                                ${project.links.map(link => `<a href="${link.url}" class="project-link" target="_blank">${link.label} →</a>`).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${project.photos && project.photos.length > 0 ? `
-                        <div class="project-photos">
-                            <h4 class="section-label">Photos (${project.photos.length})</h4>
-                            <div class="photos-slider-container">
-                                <div class="photos-slider">
-                                    ${project.photos.map(photo => `<img src="${photo}" alt="${project.name}" class="project-photo-slide" loading="lazy">`).join('')}
-                                </div>
-                                ${project.photos.length > 1 ? `
-                                    <div class="slider-hint">Scroll for more →</div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${project.github ? `<a href="${project.github}" class="github-link" target="_blank">View on GitHub →</a>` : ''}
                 </div>
             </div>
         `).join('');

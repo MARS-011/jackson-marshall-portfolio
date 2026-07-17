@@ -109,7 +109,7 @@ const PortfolioEffects = (function () {
        Magnetic links — nudges links toward the cursor within their own
        bounding box, springs back on leave. Desktop-only (fine pointer).
        ------------------------------------------------------------------ */
-    const MAGNETIC_SELECTOR = '.nav-link, .view-all-link, .github-link, .project-link, .detail-link-card';
+    const MAGNETIC_SELECTOR = '.nav-link, .view-all-link, .detail-link-card';
     const MAGNETIC_STRENGTH = 0.35;
 
     function initMagneticLinks(root) {
@@ -217,23 +217,43 @@ const PortfolioEffects = (function () {
         el.setAttribute('aria-label', text);
         el.textContent = '';
 
-        const tokens = mode === 'words' ? text.split(/(\s+)/) : text.split('');
         const frag = document.createDocumentFragment();
         const units = [];
 
-        tokens.forEach((token) => {
-            const isWhitespace = mode === 'words' ? /^\s+$/.test(token) : token === ' ';
-            if (isWhitespace) {
+        text.split(/(\s+)/).forEach((token) => {
+            if (/^\s+$/.test(token)) {
                 frag.appendChild(document.createTextNode(token));
                 return;
             }
             if (!token.length) return;
-            const span = document.createElement('span');
-            span.className = mode === 'words' ? 'tg-word' : 'tg-char';
-            span.textContent = token;
-            span.setAttribute('aria-hidden', 'true');
-            frag.appendChild(span);
-            units.push(span);
+
+            if (mode === 'words') {
+                const span = document.createElement('span');
+                span.className = 'tg-word';
+                span.textContent = token;
+                span.setAttribute('aria-hidden', 'true');
+                frag.appendChild(span);
+                units.push(span);
+                return;
+            }
+
+            // Character mode: each word's letters are grouped inside a
+            // single inline-block wrapper so the browser can only break
+            // lines at real word boundaries — otherwise every individual
+            // letter span becomes its own breakable box and words like
+            // "MARSHALL" can wrap mid-word (e.g. a trailing "LL" dropping
+            // to its own line).
+            const wordWrap = document.createElement('span');
+            wordWrap.className = 'tg-word-wrap';
+            token.split('').forEach((ch) => {
+                const span = document.createElement('span');
+                span.className = 'tg-char';
+                span.textContent = ch;
+                span.setAttribute('aria-hidden', 'true');
+                wordWrap.appendChild(span);
+                units.push(span);
+            });
+            frag.appendChild(wordWrap);
         });
 
         el.appendChild(frag);
