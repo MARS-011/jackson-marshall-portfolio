@@ -69,5 +69,15 @@
     "writing": [],
     "gallery": [],
     "links": {},
-    "bio": {}
+    "bio": {
+        "aboutText": "Chemical engineer with expertise in process optimization, sustainable systems design, and technical problem-solving. Focused on applying rigorous analytical methods to real-world challenges in energy, materials, and environmental engineering. Proficient in laboratory protocols, data analysis, and cross-functional collaboration.",
+        "certifications": [
+            "WHMIS 2015",
+            "Bronze Cross",
+            "CAN Sail 4",
+            "Smart Serve",
+            "First Aid/CPR",
+            "Google Cybersecurity"
+        ]
+    }
 }

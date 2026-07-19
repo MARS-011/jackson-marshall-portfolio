@@ -471,21 +471,42 @@ document.getElementById('saveGalleryButton')?.addEventListener('click', () => {
 // ============================================================================
 
 function renderBioEditor() {
-    const editor = document.getElementById('bioEditor');
+    const bioEditor = document.getElementById('bioEditor');
+    const aboutEditor = document.getElementById('aboutTextEditor');
+    const certsEditor = document.getElementById('certsEditor');
     const bio = DataManager.getBio();
     
-    if (editor && bio) {
-        editor.value = bio.content;
-        editor.style.height = '200px';
-        editor.addEventListener('change', (e) => {
-            updateBio(e.target.value);
-        });
+    if (bio) {
+        if (bioEditor) {
+            bioEditor.value = bio.content || '';
+            bioEditor.addEventListener('input', updateBioData);
+        }
+        if (aboutEditor) {
+            aboutEditor.value = bio.aboutText || '';
+            aboutEditor.addEventListener('input', updateBioData);
+        }
+        if (certsEditor) {
+            certsEditor.value = (bio.certifications || []).join('\n');
+            certsEditor.addEventListener('input', updateBioData);
+        }
     }
 }
 
-function updateBio(content) {
+function updateBioData() {
+    const bioEditor = document.getElementById('bioEditor');
+    const aboutEditor = document.getElementById('aboutTextEditor');
+    const certsEditor = document.getElementById('certsEditor');
+    
     const bio = DataManager.getBio();
-    bio.content = content;
+    if (bioEditor) bio.content = bioEditor.value;
+    if (aboutEditor) bio.aboutText = aboutEditor.value;
+    if (certsEditor) {
+        bio.certifications = certsEditor.value
+            .split('\n')
+            .map(c => c.trim())
+            .filter(c => c.length > 0);
+    }
+    
     DataManager.saveBio(bio);
 }
 

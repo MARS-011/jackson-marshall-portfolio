@@ -30,8 +30,22 @@ function loadDynamicContent() {
     
     // Update bio section
     const bioContent = document.getElementById('bioContent');
-    if (bioContent && bio) {
+    if (bioContent && bio && bio.content) {
         bioContent.innerHTML = DataManager.formatText(bio.content);
+    }
+
+    // Update about text and certifications
+    const aboutText = document.getElementById('aboutText');
+    const certificationsList = document.getElementById('certificationsList');
+    
+    if (aboutText && bio && bio.aboutText) {
+        aboutText.textContent = bio.aboutText;
+    }
+    
+    if (certificationsList && bio && bio.certifications) {
+        certificationsList.innerHTML = bio.certifications
+            .map(cert => `<span class="cert-badge">${cert}</span>`)
+            .join('');
     }
 
     // Update Projects Grid (Show first 3)
