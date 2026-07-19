@@ -8,32 +8,10 @@ gsap.registerPlugin(ScrollTrigger);
 
 /* ============================================================================
    LENIS SMOOTH SCROLL SETUP
-   Uses GSAP ticker exclusively — no separate requestAnimationFrame loop
+   Shared implementation lives in effects.js (PortfolioEffects.initLenis)
    ============================================================================ */
 
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isMobile = window.innerWidth < 768;
-let lenis = null;
-
-if (!prefersReducedMotion && !isMobile) {
-    lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-        touchMultiplier: 2,
-        infinite: false,
-    });
-
-    lenis.on('scroll', ScrollTrigger.update);
-
-    gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-    });
-
-    gsap.ticker.lagSmoothing(0);
-} else {
-    document.documentElement.style.scrollBehavior = 'auto';
-}
+let lenis = PortfolioEffects.initLenis();
 
 /* ============================================================================
    DYNAMIC CONTENT LOADING

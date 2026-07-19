@@ -9,6 +9,37 @@ const PortfolioEffects = (function () {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* ------------------------------------------------------------------
+       Lenis smooth scroll setup
+       Shared across all pages (index, gallery, projects, writing).
+       Wires Lenis into the GSAP ticker exclusively — no separate
+       requestAnimationFrame loop. Falls back to native scroll on
+       reduced-motion or mobile. Requires gsap.registerPlugin(ScrollTrigger)
+       to have already been called by the page script.
+       ------------------------------------------------------------------ */
+    function initLenis() {
+        const isMobile = window.innerWidth < 768;
+
+        if (prefersReducedMotion || isMobile) {
+            document.documentElement.style.scrollBehavior = 'auto';
+            return null;
+        }
+
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        return lenis;
+    }
+
+    /* ------------------------------------------------------------------
        Film grain overlay
        ------------------------------------------------------------------ */
     function initGrain() {
@@ -451,5 +482,5 @@ const PortfolioEffects = (function () {
         initMagneticLinks();
     });
 
-    return { initMagneticLinks, initGridReveal, initScrollTilt, initTextReveal, initCardTilt3D, initSparkles };
+    return { initLenis, initMagneticLinks, initGridReveal, initScrollTilt, initTextReveal, initCardTilt3D, initSparkles };
 })();

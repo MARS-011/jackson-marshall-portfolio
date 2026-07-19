@@ -277,17 +277,6 @@ p {
     margin: 0 auto;
 }
 
-.section-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-}
-
-.section-header h2 {
-    margin-bottom: 0;
-}
-
 .about-text {
     font-size: 1.05rem;
     line-height: 1.9;
@@ -596,16 +585,11 @@ p {
     font-weight: 600;
 }
 
-.card-description,
-.card-full-description {
+.card-description {
     color: var(--color-muted);
     font-size: 0.95rem;
     line-height: 1.7;
     margin-bottom: 1.5rem;
-}
-
-.card-full-description {
-    color: var(--color-lavender);
 }
 
 .card-tags {
@@ -613,22 +597,6 @@ p {
     flex-wrap: wrap;
     gap: 0.6rem;
     margin-bottom: 1.5rem;
-}
-
-.github-link {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--color-lavender);
-    text-decoration: none;
-    letter-spacing: 0.05em;
-    transition: color 0.3s ease;
-    border-bottom: 1px solid rgba(var(--color-lavender-rgb), 0.3);
-    padding-bottom: 2px;
-}
-
-.github-link:hover {
-    color: var(--color-ink);
-    border-bottom-color: rgba(var(--color-lavender-rgb), 0.6);
 }
 
 .section-label {
@@ -639,68 +607,6 @@ p {
     color: var(--color-muted);
     margin-bottom: 0.75rem;
     margin-top: 1.5rem;
-}
-
-.links-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.project-link {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--color-lavender);
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.project-link:hover {
-    color: var(--color-ink);
-}
-
-.photos-slider-container {
-    position: relative;
-    margin-bottom: 1.5rem;
-}
-
-.photos-slider {
-    display: flex;
-    gap: 0.75rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE/Edge */
-    padding-bottom: 0.5rem;
-}
-
-.photos-slider::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-}
-
-.project-photo-slide {
-    flex: 0 0 180px;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    border: 1px solid rgba(var(--color-lavender-rgb), 0.15);
-    border-radius: 2px;
-    scroll-snap-align: start;
-    transition: border-color 0.3s ease, transform 0.3s ease;
-}
-
-.project-photo-slide:hover {
-    border-color: rgba(var(--color-lavender-rgb), 0.4);
-    transform: scale(1.02);
-}
-
-.slider-hint {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--color-muted);
-    text-align: right;
-    margin-top: 0.25rem;
-    opacity: 0.6;
 }
 
 /* ============================================================================
@@ -736,9 +642,6 @@ body.overlay-open {
     min-height: 100%;
     display: flex;
     flex-direction: column;
-}
-
-.overlay-content-wrapper {
     max-width: 1000px;
     margin: 0 auto;
     padding: 4rem 2.5rem 8rem;
