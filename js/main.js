@@ -107,6 +107,11 @@ function loadDynamicContent() {
         PortfolioEffects.initGridReveal('#artGrid .art-item');
         PortfolioEffects.initCardTilt3D('#projectsGrid .project-card');
     }
+
+    // Initialize 3D Text component
+    if (typeof BarText3D !== 'undefined') {
+        BarText3D.init('three-d-text-stage');
+    }
 }
 
 

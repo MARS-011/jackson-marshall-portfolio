@@ -508,6 +508,26 @@ p {
     color: var(--color-lavender);
 }
 
+.footer-3d-container {
+    margin-top: 4rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.three-d-text-stage {
+    width: 50%;
+    aspect-ratio: 2 / 1;
+    position: relative;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .three-d-text-stage {
+        width: 80%;
+    }
+}
+
 .contact-line:hover::after {
     width: 100%;
 }
