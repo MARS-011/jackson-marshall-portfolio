@@ -22,7 +22,7 @@ const BarText3D = (function () {
         barColor: "#ffffff",
         detail: 5,
         depth: 12, // Reduced from 18 for less thickness
-        glow: 16,
+        glow: 4, // Reduced by another 50% (total 75% reduction from original 16)
         grain: 0, // Turned off grain
         flicker: 30,
         autoRotate: true
