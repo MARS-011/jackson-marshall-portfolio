@@ -16,14 +16,14 @@ const BarText3D = (function () {
 
     // Config (defaults from the original file)
     const config = {
-        text: "MARSHALL",
+        text: "PLEASE HIRE ME",
         fontFamily: "'Playfair Display', serif",
         fontWeight: "900",
         barColor: "#ffffff",
         detail: 5,
-        depth: 18,
+        depth: 12, // Reduced from 18 for less thickness
         glow: 16,
-        grain: 14,
+        grain: 0, // Turned off grain
         flicker: 30,
         autoRotate: true
     };

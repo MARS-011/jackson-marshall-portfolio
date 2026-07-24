@@ -516,8 +516,8 @@ p {
 }
 
 .three-d-text-stage {
-    width: 50%;
-    aspect-ratio: 2 / 1;
+    width: 65%; /* Increased from 50% to make it a touch larger */
+    aspect-ratio: 2.5 / 1; /* Adjusted aspect ratio for longer text */
     position: relative;
     overflow: hidden;
 }
