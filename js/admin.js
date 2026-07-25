@@ -213,18 +213,26 @@ function renderProjectsEditor() {
                             const staged = StagingManager.isStaged(url);
                             const displaySrc = staged ? StagingManager.getBlobUrl(url) : url;
                             return `
-                                <div class="admin-photo-item ${staged ? 'is-staged' : ''}" draggable="true" data-index="${index}" data-project-id="${project.id}">
-                                    <span class="drag-handle" title="Drag to reorder">⠿</span>
-                                    <img src="${displaySrc}" class="admin-photo-thumb">
-                                    <input type="text" value="${url}" style="flex: 1;" ${staged ? 'readonly' : ''} onchange="updateProjectPhoto(${project.id}, ${index}, 'url', this.value)">
-                                    <select style="width: 80px;" onchange="updateProjectPhoto(${project.id}, ${index}, 'size', this.value)">
-                                        <option value="100%" ${size === '100%' ? 'selected' : ''}>Full</option>
-                                        <option value="75%" ${size === '75%' ? 'selected' : ''}>75%</option>
-                                        <option value="50%" ${size === '50%' ? 'selected' : ''}>50%</option>
-                                        <option value="25%" ${size === '25%' ? 'selected' : ''}>25%</option>
-                                    </select>
-                                    ${staged ? '<span class="staged-badge">PENDING</span>' : ''}
-                                    <button class="delete-button" style="padding: 2px 8px;" onclick="removeProjectPhoto(${project.id}, ${index})">×</button>
+                                <div class="admin-photo-item ${staged ? 'is-staged' : ''}" draggable="true" data-index="${index}" data-project-id="${project.id}" style="flex-direction: column; align-items: stretch; gap: 8px;">
+                                    <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                                        <span class="drag-handle" title="Drag to reorder">⠿</span>
+                                        <img src="${displaySrc}" class="admin-photo-thumb">
+                                        <input type="text" value="${url}" style="flex: 1;" ${staged ? 'readonly' : ''} onchange="updateProjectPhoto(${project.id}, ${index}, 'url', this.value)" placeholder="Image URL">
+                                        <select style="width: 80px;" onchange="updateProjectPhoto(${project.id}, ${index}, 'size', this.value)">
+                                            <option value="100%" ${size === '100%' ? 'selected' : ''}>Full</option>
+                                            <option value="75%" ${size === '75%' ? 'selected' : ''}>75%</option>
+                                            <option value="50%" ${size === '50%' ? 'selected' : ''}>50%</option>
+                                            <option value="25%" ${size === '25%' ? 'selected' : ''}>25%</option>
+                                        </select>
+                                        ${staged ? '<span class="staged-badge">PENDING</span>' : ''}
+                                        <button class="delete-button" style="padding: 2px 8px;" onclick="removeProjectPhoto(${project.id}, ${index})">×</button>
+                                    </div>
+                                    <div style="padding-left: 34px; width: 100%;">
+                                        <input type="text" value="${isObject ? photo.caption || '' : ''}" 
+                                            placeholder="Add a caption for this photo..." 
+                                            style="width: 100%; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" 
+                                            onchange="updateProjectPhoto(${project.id}, ${index}, 'caption', this.value)">
+                                    </div>
                                 </div>
                             `;
                         }).join('')}

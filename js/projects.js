@@ -111,11 +111,12 @@ function openProjectDetail(project) {
                     const isObject = typeof photo === 'object' && photo !== null;
                     const src = isObject ? photo.url : photo;
                     const size = isObject ? photo.size || '100%' : '100%';
-                    return `
-                        <div class="detail-photo-item" style="width: ${size}; margin: 0 auto;">
-                            <img src="${src}" alt="${project.name}" style="width: 100%; display: block;" loading="lazy">
-                        </div>
-                    `;
+	                    return `
+	                        <div class="detail-photo-item" style="width: ${size}; margin: 0 auto; margin-bottom: 2rem;">
+	                            <img src="${src}" alt="${project.name}" style="width: 100%; display: block; margin-bottom: 0.75rem;" loading="lazy">
+	                            ${isObject && photo.caption ? `<p class="detail-photo-caption" style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #5a6490; text-align: center;">${photo.caption}</p>` : ''}
+	                        </div>
+	                    `;
                 }).join('')}
             </div>
         ` : ''}
