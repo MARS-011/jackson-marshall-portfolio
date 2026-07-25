@@ -44,7 +44,15 @@
             "links": [],
             "photos": [
                 "assets/images/projects/easel-photo-3.jpg",
-                "assets/images/projects/easel-photo-4.jpg"
+                "assets/images/projects/easel-photo-4.jpg",
+                {
+                    "url": "assets/images/projects/1784923949115-easel-build-2.jpg",
+                    "size": "100%"
+                },
+                {
+                    "url": "assets/images/projects/1784923949425-easel-build-3.jpg",
+                    "size": "100%"
+                }
             ],
             "id": 8,
             "previewImage": "assets/images/uploads/1783881236290-Screenshot_2026-06-28_001730.jpg",

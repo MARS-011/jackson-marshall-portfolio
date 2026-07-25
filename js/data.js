@@ -53,95 +53,117 @@ const DataManager = (() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cachedData));
     }
 
-    // Upload an image file to the repo (as its own file) via GitHub Contents API,
-    // instead of embedding it as base64 inside content.json. Keeps content.json
-    // small and fast to load, and avoids the ~1MB GitHub API single-file limit.
-    // Returns the relative path (e.g. "assets/images/uploads/1699999999-photo.jpg")
-    // to store in content.json.
-    async function uploadImageToGitHub(file, token, repoOwner, repoName, folder = 'assets/images/uploads') {
-        if (!token) throw new Error('GitHub Token is required for image upload');
-
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const path = `${folder}/${Date.now()}-${safeName}`;
-        const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`;
-
-        const base64Content = await new Promise((resolve, reject) => {
+    function fileToBase64(blob) {
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => {
                 // reader.result is "data:image/png;base64,AAAA..." — strip the prefix
-                const commaIndex = reader.result.indexOf(',');
-                resolve(reader.result.slice(commaIndex + 1));
+                resolve(reader.result.slice(reader.result.indexOf(',') + 1));
             };
             reader.onerror = reject;
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(blob);
         });
-
-        const putResponse = await fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                message: `Upload image ${safeName}`,
-                content: base64Content,
-            })
-        });
-
-        if (!putResponse.ok) {
-            const errorData = await putResponse.json();
-            throw new Error(errorData.message || 'Failed to upload image to GitHub');
-        }
-
-        // Relative path works both on GitHub Pages and locally alongside index.html
-        return path;
     }
 
-    // GitHub Publishing Logic
-    async function publishToGitHub(token, repoOwner, repoName) {
+    function utf8ToBase64(str) {
+        return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    // Publish content.json AND every staged image in ONE commit via the Git
+    // Data API (blob -> tree -> commit -> ref update) instead of the old
+    // one-commit-per-image-upload flow. `stagedFiles` is the Map returned
+    // by StagingManager.getAll() — path -> { blob, originalName, ... }.
+    // Creating a blob does not create a commit, so however many images are
+    // staged, exactly one commit lands in history.
+    async function publishAll(token, repoOwner, repoName, stagedFiles) {
         if (!token) throw new Error('GitHub Token is required for publishing');
-        
-        const path = 'data/content.json';
-        const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`;
-        
-        try {
-            // 1. Get current file SHA
-            const getResponse = await fetch(url, {
-                headers: { 'Authorization': `token ${token}` }
+
+        const apiBase = `https://api.github.com/repos/${repoOwner}/${repoName}`;
+        const headers = {
+            'Authorization': `token ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github+json'
+        };
+
+        // 1. Resolve default branch (don't assume main vs master)
+        const repoRes = await fetch(apiBase, { headers });
+        if (!repoRes.ok) throw new Error('Could not read repo info');
+        const repoInfo = await repoRes.json();
+        const branch = repoInfo.default_branch;
+
+        // 2. Current commit + its tree, to use as the base for our new tree
+        const refRes = await fetch(`${apiBase}/git/ref/heads/${branch}`, { headers });
+        if (!refRes.ok) throw new Error('Could not read branch ref');
+        const refData = await refRes.json();
+        const baseCommitSha = refData.object.sha;
+
+        const baseCommitRes = await fetch(`${apiBase}/git/commits/${baseCommitSha}`, { headers });
+        if (!baseCommitRes.ok) throw new Error('Could not read base commit');
+        const baseCommitData = await baseCommitRes.json();
+        const baseTreeSha = baseCommitData.tree.sha;
+
+        // 3. Create a blob per staged image (network calls, but not commits)
+        const treeItems = [];
+        for (const [path, entry] of stagedFiles.entries()) {
+            const base64Content = await fileToBase64(entry.blob);
+            const blobRes = await fetch(`${apiBase}/git/blobs`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({ content: base64Content, encoding: 'base64' })
             });
-            
-            let sha = null;
-            if (getResponse.ok) {
-                const fileData = await getResponse.json();
-                sha = fileData.sha;
+            if (!blobRes.ok) {
+                const errorData = await blobRes.json().catch(() => ({}));
+                throw new Error(errorData.message || `Failed to upload ${entry.originalName}`);
             }
-
-            // 2. PUT updated content
-            const putResponse = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: 'Update content via Admin Dashboard',
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(cachedData, null, 4)))),
-                    sha: sha
-                })
-            });
-
-            if (!putResponse.ok) {
-                const errorData = await putResponse.json();
-                throw new Error(errorData.message || 'Failed to publish to GitHub');
-            }
-
-            // Clear draft on success
-            localStorage.removeItem(STORAGE_KEY);
-            return await putResponse.json();
-        } catch (error) {
-            console.error('GitHub Publish Error:', error);
-            throw error;
+            const blobData = await blobRes.json();
+            treeItems.push({ path, mode: '100644', type: 'blob', sha: blobData.sha });
         }
+
+        // 4. Blob for content.json itself
+        const contentBlobRes = await fetch(`${apiBase}/git/blobs`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({
+                content: utf8ToBase64(JSON.stringify(cachedData, null, 4)),
+                encoding: 'base64'
+            })
+        });
+        if (!contentBlobRes.ok) throw new Error('Failed to prepare content.json');
+        const contentBlobData = await contentBlobRes.json();
+        treeItems.push({ path: 'data/content.json', mode: '100644', type: 'blob', sha: contentBlobData.sha });
+
+        // 5. One tree containing every change
+        const treeRes = await fetch(`${apiBase}/git/trees`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ base_tree: baseTreeSha, tree: treeItems })
+        });
+        if (!treeRes.ok) throw new Error('Failed to build tree');
+        const treeData = await treeRes.json();
+
+        // 6. One commit
+        const commitMessage = stagedFiles.size > 0
+            ? `Update content + ${stagedFiles.size} image(s) via Admin Dashboard`
+            : 'Update content via Admin Dashboard';
+
+        const commitRes = await fetch(`${apiBase}/git/commits`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ message: commitMessage, tree: treeData.sha, parents: [baseCommitSha] })
+        });
+        if (!commitRes.ok) throw new Error('Failed to create commit');
+        const commitData = await commitRes.json();
+
+        // 7. Move the branch ref to the new commit
+        const updateRefRes = await fetch(`${apiBase}/git/refs/heads/${branch}`, {
+            method: 'PATCH',
+            headers,
+            body: JSON.stringify({ sha: commitData.sha })
+        });
+        if (!updateRefRes.ok) throw new Error('Failed to update branch ref');
+
+        localStorage.removeItem(STORAGE_KEY);
+        return commitData;
     }
 
     // Data Accessors
@@ -222,8 +244,7 @@ const DataManager = (() => {
         formatText,
         initialize,
         getAllData,
-        publishToGitHub,
-        uploadImageToGitHub,
+        publishAll,
         getProjects,
         getWriting,
         getGallery,

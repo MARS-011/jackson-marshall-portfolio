@@ -520,3 +520,120 @@
         gap: 0.75rem;
     }
 }
+
+/* ============================================================================
+   MEDIA STAGING UI
+   Drop zones + staged-file previews. Nothing here has hit GitHub yet — the
+   "PENDING" badge marks images staged locally that will upload on Publish.
+   ============================================================================ */
+
+.media-dropzone {
+    border: 1px dashed rgba(184, 197, 255, 0.3);
+    border-radius: 2px;
+    padding: 1.25rem;
+    margin-top: 0.75rem;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(184, 197, 255, 0.03);
+    transition: all 0.2s ease;
+}
+
+.media-dropzone p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: #5a6490;
+    margin: 0;
+    letter-spacing: 0.02em;
+    pointer-events: none;
+}
+
+.media-dropzone:hover {
+    border-color: rgba(184, 197, 255, 0.5);
+    background: rgba(184, 197, 255, 0.06);
+}
+
+.media-dropzone.drag-over {
+    border-color: #b8c5ff;
+    background: rgba(184, 197, 255, 0.12);
+}
+
+.media-dropzone.is-processing {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.admin-photo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.admin-photo-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: grab;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-photo-item:hover {
+    border-color: rgba(184, 197, 255, 0.25);
+}
+
+.admin-photo-item.is-staged {
+    border-color: rgba(184, 197, 255, 0.35);
+    background: rgba(184, 197, 255, 0.08);
+}
+
+.admin-photo-item:active {
+    cursor: grabbing;
+}
+
+.drag-handle {
+    color: #5a6490;
+    font-size: 1rem;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.admin-photo-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.staged-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: #b8c5ff;
+    background: rgba(184, 197, 255, 0.15);
+    border: 1px solid rgba(184, 197, 255, 0.3);
+    padding: 2px 6px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.preview-image-crop-box .staged-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+
+.gallery-upload-item.is-staged {
+    outline: 1px solid rgba(184, 197, 255, 0.5);
+    position: relative;
+}
+
+.gallery-upload-item .staged-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+}

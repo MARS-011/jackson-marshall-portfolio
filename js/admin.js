@@ -99,6 +99,7 @@ function showDashboard() {
 }
 
 function initializeDashboard() {
+    setupMediaDropzones();
     renderProjectsEditor();
     renderWritingEditor();
     renderGalleryEditor();
@@ -155,15 +156,19 @@ function renderProjectsEditor() {
             </div>
 
             <div class="form-group">
-                <label>Preview Image URL (Appears under description)</label>
+                <label>Preview Image (Appears under description)</label>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="URL or upload a file →">
-                    <input type="file" accept="image/*" onchange="handleSingleUpload(this, (val) => updateProjectField(${project.id}, 'previewImage', val))" style="width: auto;">
+                    <input type="text" data-field="previewImage" value="${project.previewImage || ''}" onchange="updateProjectField(${project.id}, 'previewImage', this.value)" placeholder="Paste a URL, or drop a file below">
+                </div>
+                <div class="media-dropzone" data-project-id="${project.id}" data-target="previewImage">
+                    <p>Drop an image here or click to browse — resized &amp; staged locally, nothing uploads until Publish.</p>
+                    <input type="file" accept="image/*" class="media-dropzone-input" style="display:none;">
                 </div>
                 ${project.previewImage ? `
                     <div style="display: flex; gap: 10px; margin-top: 10px; align-items: flex-start;">
-                        <div class="preview-image-crop-box" style="width: 160px; height: 90px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); border-radius: 2px; flex-shrink: 0;">
-                            <img src="${project.previewImage}" style="width: 100%; height: 100%; object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'}; display: block;">
+                        <div class="preview-image-crop-box" style="width: 160px; height: 90px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); border-radius: 2px; flex-shrink: 0; position: relative;">
+                            <img src="${StagingManager.isStaged(project.previewImage) ? StagingManager.getBlobUrl(project.previewImage) : project.previewImage}" style="width: 100%; height: 100%; object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'}; display: block;">
+                            ${StagingManager.isStaged(project.previewImage) ? '<span class="staged-badge">PENDING</span>' : ''}
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <label style="margin: 0;">Fit
@@ -200,28 +205,34 @@ function renderProjectsEditor() {
 
                 <div class="form-group">
                     <label>Project Photos & Sizes</label>
-                    <div class="admin-photo-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px;">
+                    <div class="admin-photo-list" data-project-id="${project.id}">
                         ${(project.photos || []).map((photo, index) => {
                             const isObject = typeof photo === 'object';
                             const url = isObject ? photo.url : photo;
                             const size = isObject ? photo.size || '100%' : '100%';
+                            const staged = StagingManager.isStaged(url);
+                            const displaySrc = staged ? StagingManager.getBlobUrl(url) : url;
                             return `
-                                <div style="display: flex; gap: 10px; align-items: center; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
-                                    <img src="${url}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 2px;">
-                                    <input type="text" value="${url}" style="flex: 1;" onchange="updateProjectPhoto(${project.id}, ${index}, 'url', this.value)">
+                                <div class="admin-photo-item ${staged ? 'is-staged' : ''}" draggable="true" data-index="${index}" data-project-id="${project.id}">
+                                    <span class="drag-handle" title="Drag to reorder">⠿</span>
+                                    <img src="${displaySrc}" class="admin-photo-thumb">
+                                    <input type="text" value="${url}" style="flex: 1;" ${staged ? 'readonly' : ''} onchange="updateProjectPhoto(${project.id}, ${index}, 'url', this.value)">
                                     <select style="width: 80px;" onchange="updateProjectPhoto(${project.id}, ${index}, 'size', this.value)">
                                         <option value="100%" ${size === '100%' ? 'selected' : ''}>Full</option>
                                         <option value="75%" ${size === '75%' ? 'selected' : ''}>75%</option>
                                         <option value="50%" ${size === '50%' ? 'selected' : ''}>50%</option>
                                         <option value="25%" ${size === '25%' ? 'selected' : ''}>25%</option>
                                     </select>
+                                    ${staged ? '<span class="staged-badge">PENDING</span>' : ''}
                                     <button class="delete-button" style="padding: 2px 8px;" onclick="removeProjectPhoto(${project.id}, ${index})">×</button>
                                 </div>
                             `;
                         }).join('')}
                     </div>
-                    <input type="file" multiple accept="image/*" onchange="handlePhotoUpload(${project.id}, this)">
-                    <p class="form-hint" style="font-size: 0.7rem; color: #5a6490; margin-top: 0.25rem;">Upload multiple images. Adjust sizes individually.</p>
+                    <div class="media-dropzone" data-project-id="${project.id}" data-target="photos">
+                        <p>Drop images here or click to browse — resized &amp; staged locally, nothing uploads until Publish. Drag items above to reorder.</p>
+                        <input type="file" multiple accept="image/*" class="media-dropzone-input" style="display:none;">
+                    </div>
                 </div>
 	        </div>
 	    `).join('');
@@ -245,54 +256,126 @@ function updateProjectField(id, field, value) {
     renderProjectsEditor();
 }
 
-function getUploadToken() {
-    const token = (githubTokenInput?.value || '').trim() || GITHUB_TOKEN;
-    if (!token) {
-        alert('Please enter your GitHub Personal Access Token first (needed to upload images to the repo).');
-        githubTokenInput?.focus();
-        return null;
-    }
-    return token;
-}
+// ============================================================================
+// MEDIA STAGING UI (drop zones + drag-to-reorder)
+// Files are compressed and staged locally (StagingManager) on drop/select.
+// Nothing hits GitHub until Publish — see the publishButton handler below.
+// ============================================================================
 
-async function handleSingleUpload(input, callback) {
-    const file = input.files[0];
-    if (!file) return;
-    const token = getUploadToken();
-    if (!token) return;
+async function handleMediaFiles(zone, files) {
+    const imageFiles = files.filter(f => f.type.startsWith('image/'));
+    if (imageFiles.length === 0) return;
+
+    const projectId = Number(zone.dataset.projectId);
+    const target = zone.dataset.target; // 'previewImage' or 'photos'
+    const project = DataManager.getProjects().find(p => p.id === projectId);
+    if (!project) return;
+
+    zone.classList.add('is-processing');
+    const originalText = zone.querySelector('p').textContent;
+    zone.querySelector('p').textContent = 'Processing...';
 
     try {
+        if (target === 'previewImage') {
+            const { path } = await StagingManager.stage(imageFiles[0], 'assets/images/uploads');
+            DataManager.updateProject(projectId, { previewImage: path });
+        } else {
+            const newPhotos = [...(project.photos || [])];
+            for (const file of imageFiles) {
+                const { path } = await StagingManager.stage(file, 'assets/images/projects');
+                newPhotos.push({ url: path, size: '100%' });
+            }
+            DataManager.updateProject(projectId, { photos: newPhotos });
+        }
         showSyncIndicator();
-        const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio');
-        callback(path);
-        renderProjectsEditor();
     } catch (error) {
-        console.error('Error uploading file:', error);
-        alert(`Image upload failed: ${error.message}`);
+        console.error('Error staging file:', error);
+        alert(`Couldn't process image: ${error.message}`);
+    } finally {
+        zone.classList.remove('is-processing');
+        if (zone.querySelector('p')) zone.querySelector('p').textContent = originalText;
+        renderProjectsEditor();
     }
 }
 
-async function handlePhotoUpload(projectId, input) {
-    const files = Array.from(input.files);
-    if (files.length === 0) return;
-    const token = getUploadToken();
-    if (!token) return;
+let mediaDropzonesInitialized = false;
+let photoDragSource = null;
 
-    const projects = DataManager.getProjects();
-    const project = projects.find(p => p.id === projectId);
+function setupMediaDropzones() {
+    if (mediaDropzonesInitialized) return;
+    mediaDropzonesInitialized = true;
+
+    document.addEventListener('click', (e) => {
+        const zone = e.target.closest('.media-dropzone');
+        if (zone && e.target.tagName !== 'INPUT') {
+            zone.querySelector('.media-dropzone-input').click();
+        }
+    });
+
+    document.addEventListener('change', (e) => {
+        if (e.target.matches('.media-dropzone-input')) {
+            const zone = e.target.closest('.media-dropzone');
+            handleMediaFiles(zone, Array.from(e.target.files));
+            e.target.value = '';
+        }
+    });
+
+    document.addEventListener('dragover', (e) => {
+        const zone = e.target.closest('.media-dropzone');
+        if (zone) {
+            e.preventDefault();
+            zone.classList.add('drag-over');
+        } else if (e.target.closest('.admin-photo-item')) {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener('dragleave', (e) => {
+        const zone = e.target.closest('.media-dropzone');
+        if (zone) zone.classList.remove('drag-over');
+    });
+
+    document.addEventListener('drop', (e) => {
+        const zone = e.target.closest('.media-dropzone');
+        if (zone) {
+            e.preventDefault();
+            zone.classList.remove('drag-over');
+            handleMediaFiles(zone, Array.from(e.dataTransfer.files || []));
+            return;
+        }
+
+        const item = e.target.closest('.admin-photo-item');
+        if (item && photoDragSource) {
+            e.preventDefault();
+            const targetProjectId = Number(item.dataset.projectId);
+            const targetIndex = Number(item.dataset.index);
+            if (targetProjectId === photoDragSource.projectId && targetIndex !== photoDragSource.index) {
+                reorderProjectPhotos(photoDragSource.projectId, photoDragSource.index, targetIndex);
+            }
+        }
+        photoDragSource = null;
+    });
+
+    document.addEventListener('dragstart', (e) => {
+        const item = e.target.closest('.admin-photo-item');
+        if (item) {
+            photoDragSource = { projectId: Number(item.dataset.projectId), index: Number(item.dataset.index) };
+            e.dataTransfer.effectAllowed = 'move';
+        }
+    });
+
+    document.addEventListener('dragend', () => {
+        photoDragSource = null;
+    });
+}
+
+function reorderProjectPhotos(projectId, fromIndex, toIndex) {
+    const project = DataManager.getProjects().find(p => p.id === projectId);
     if (!project) return;
 
     const newPhotos = [...(project.photos || [])];
-
-    for (const file of files) {
-        try {
-            const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio', 'assets/images/projects');
-            newPhotos.push({ url: path, size: '100%' });
-        } catch (error) {
-            console.error('Error uploading file:', error);
-            alert(`Image upload failed for ${file.name}: ${error.message}`);
-        }
-    }
+    const [moved] = newPhotos.splice(fromIndex, 1);
+    newPhotos.splice(toIndex, 0, moved);
 
     DataManager.updateProject(projectId, { photos: newPhotos });
     renderProjectsEditor();
@@ -318,8 +401,10 @@ function removeProjectPhoto(projectId, photoIndex) {
     if (!project) return;
 
     const newPhotos = [...(project.photos || [])];
-    newPhotos.splice(photoIndex, 1);
-    
+    const [removed] = newPhotos.splice(photoIndex, 1);
+    const url = typeof removed === 'object' ? removed?.url : removed;
+    if (url && StagingManager.isStaged(url)) StagingManager.unstage(url);
+
     DataManager.updateProject(projectId, { photos: newPhotos });
     renderProjectsEditor();
 }
@@ -427,8 +512,9 @@ function renderGalleryEditor() {
     editor.innerHTML = `
         <div class="gallery-upload-grid">
             ${gallery.map((item, index) => `
-                <div class="gallery-upload-item" onclick="triggerGalleryUpload(${item.id})">
-                    ${item.imagePath ? `<img src="${item.imagePath}" alt="Render ${item.id}">` : `<div class="gallery-upload-placeholder">[RENDER_${String(index + 1).padStart(2, '0')}]</div>`}
+                <div class="gallery-upload-item ${item.imagePath && StagingManager.isStaged(item.imagePath) ? 'is-staged' : ''}" onclick="triggerGalleryUpload(${item.id})">
+                    ${item.imagePath ? `<img src="${StagingManager.isStaged(item.imagePath) ? StagingManager.getBlobUrl(item.imagePath) : item.imagePath}" alt="Render ${item.id}">` : `<div class="gallery-upload-placeholder">[RENDER_${String(index + 1).padStart(2, '0')}]</div>`}
+                    ${item.imagePath && StagingManager.isStaged(item.imagePath) ? '<span class="staged-badge">PENDING</span>' : ''}
                 </div>
                 <input type="file" id="gallery-input-${item.id}" class="gallery-upload-input" onchange="handleGalleryUpload(${item.id}, event)">
             `).join('')}
@@ -443,12 +529,10 @@ function triggerGalleryUpload(id) {
 async function handleGalleryUpload(id, event) {
     const file = event.target.files[0];
     if (!file) return;
-    const token = getUploadToken();
-    if (!token) return;
 
     try {
         showSyncIndicator();
-        const path = await DataManager.uploadImageToGitHub(file, token, 'MARS-011', 'jackson-marshall-portfolio', 'assets/images/gallery');
+        const { path } = await StagingManager.stage(file, 'assets/images/gallery');
         const gallery = DataManager.getGallery();
         const item = gallery.find(g => g.id === id);
         if (item) {
@@ -457,8 +541,10 @@ async function handleGalleryUpload(id, event) {
             renderGalleryEditor();
         }
     } catch (error) {
-        console.error('Error uploading file:', error);
-        alert(`Image upload failed: ${error.message}`);
+        console.error('Error staging file:', error);
+        alert(`Couldn't process image: ${error.message}`);
+    } finally {
+        event.target.value = '';
     }
 }
 
@@ -579,14 +665,19 @@ if (publishButton) {
 
         publishButton.disabled = true;
         publishButton.textContent = 'PUBLISHING...';
-        publishStatus.textContent = 'Connecting to GitHub...';
+        const pendingCount = StagingManager.count();
+        publishStatus.textContent = pendingCount > 0
+            ? `Uploading ${pendingCount} image(s) and publishing...`
+            : 'Connecting to GitHub...';
         publishStatus.style.color = '#b8c5ff';
 
         try {
             const repoOwner = 'MARS-011';
             const repoName = 'jackson-marshall-portfolio';
             
-            await DataManager.publishToGitHub(token, repoOwner, repoName);
+            await DataManager.publishAll(token, repoOwner, repoName, StagingManager.getAll());
+            StagingManager.clear();
+            renderProjectsEditor();
             
             publishStatus.textContent = 'SUCCESS: Content published to GitHub! Site will rebuild in 1-2 minutes.';
             publishStatus.style.color = '#4ade80';
