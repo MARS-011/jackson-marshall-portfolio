@@ -1,21 +1,6 @@
 {
     "projects": [
         {
-            "id": 2,
-            "name": "D&D Toolset",
-            "description": "Web-based tools for Dungeons & Dragons campaign management and character creation.",
-            "fullDescription": "Comprehensive toolset for D&D players and dungeon masters. Includes character builders, spell databases, encounter generators, and campaign tracking features.",
-            "stack": [
-                "React",
-                "JavaScript",
-                "Firebase"
-            ],
-            "github": "https://github.com/MARS-011",
-            "previewImage": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
-            "links": [],
-            "photos": []
-        },
-        {
             "id": 7,
             "name": "Orbis Generative Art",
             "previewImage": "assets/images/uploads/mrzq9byrkip2-Screenshot_2026-06-28_122747.png",
@@ -28,12 +13,29 @@
             ],
             "github": "https://github.com/MARS-011",
             "links": [],
-            "photos": []
+            "photos": [
+                {
+                    "url": "assets/images/projects/ms0gx3xd0pth-orbis_flame_1x_1777677780789.png",
+                    "size": "100%"
+                },
+                {
+                    "url": "assets/images/projects/ms0h09nrvbl8-orbis_anim_1784989977361.png",
+                    "size": "100%"
+                },
+                {
+                    "url": "assets/images/projects/ms0h6cfq19df-orbis_attractor_1784990107941.png",
+                    "size": "100%"
+                },
+                {
+                    "url": "assets/images/projects/ms0h6dtk9jij-orbis_attractor_1784990158318.png",
+                    "size": "100%"
+                }
+            ]
         },
         {
             "name": "Easel",
             "description": "A custom CNC-engraved wooden easel",
-            "fullDescription": "This project was the most complex thing I had ever made at the time, and so the first step was to model the entire thing in Blender. You may ask \" ??? Why Blender of all programs? The main reason is the ability to use SVG as UV maps to make variable height engravings and then export them to Fusion for tool paths and then G code. ( see Image 1)\n\nAfter I had my models and tool path, I then had to wrangle with the awful thing that is Home Depot lumber. Warped and prone to splitting, it took many hours to get things planed down and attached fully straight. (See Image 2)\n\nNext came the CNC. I couldn't just engrave the long parts as they were too long to fit into the machine, and if I messed up once Id have to create an entire new part. The solution to this is engraved panels; this way, I could make a bunch of uniform ones and throw away the ones that I needed to zero in my cuts. Although taking more tries than I thought it got it down to a science and had over 20 nearly identical engraved panels. (see Images 3 and 4)\n\nAfter this, I realized you couldn't see the engraving very much as it didn't contrast with the wood around it. I applied a coat of lacquer over them all and then used a hand plane to remove the coat from the top, leaving only the sunken area coloured. (See Image 5)\n\nI did the same process for the base to hold the painting, only I had one attempt at the CNC, and I got it. Only after did my hubris kick in, and I decided I wanted to go just a smidge deeper. To my horror, when I returned a second time, it had all been shifted 3cm left. But it was still salvageable, and as I stared at it more and more, I realized it looked.... good. So quickly I covered the top in resin this time, let it dry, planed it off, and wow, it looks phenomenal. My mistake had been remedied. ( See Image 6)\n\nAll that was left was assembly, and when all put together, you get this ( See Image 7)",
+            "fullDescription": "This project was the most complex thing I had ever made at the time, and so the first step was to model the entire thing in Blender. You may ask \" ??? Why Blender of all programs? The main reason is the ability to use SVG as UV maps to make variable height engravings and then export them to Fusion for tool paths and then G code. ( see Image 1)\n\nAfter I had my models and tool path, I then had to wrangle with the awful thing that is Home Depot lumber. Warped and prone to splitting, it took many hours to get things planed down and attached fully straight. (See Image 2)\n\nNext came the CNC. I couldn't just engrave the long parts as they were too long to fit into the machine, and if I messed up once Id have to create an entire new part. The solution to this is engraved panels; this way, I could make a bunch of uniform ones and throw away the ones that I needed to zero in my cuts. Although taking more tries than I thought it got it down to a science and had over 20 nearly identical engraved panels. (see Image 3)\n\nAfter this, I realized you couldn't see the engraving very much as it didn't contrast with the wood around it. I applied a coat of lacquer over them all and then used a hand plane to remove the coat from the top, leaving only the sunken area coloured. (See Image 4)\n\nI did the same process for the base to hold the painting, only I had one attempt at the CNC, and I got it. Only after did my hubris kick in, and I decided I wanted to go just a smidge deeper. To my horror, when I returned a second time, it had all been shifted 3cm left. But it was still salvageable, and as I stared at it more and more, I realized it looked.... good. So quickly I covered the top in resin this time, let it dry, planed it off, and wow, it looks phenomenal. My mistake had been remedied. ( See Image 5)\n\nAll that was left was assembly, and when all put together, you get this ( See Image 6)",
             "stack": [
                 "Blender",
                 "Fusion"
@@ -43,11 +45,33 @@
             "photos": [
                 {
                     "url": "assets/images/projects/mrzqasgwe5xs-Screenshot_2026-06-28_172335.png",
-                    "size": "100%"
+                    "size": "100%",
+                    "caption": "Image 1: Full Blender model"
                 },
                 {
                     "url": "assets/images/projects/mrzqau7xxieb-Screenshot_2026-06-28_172351.png",
-                    "size": "100%"
+                    "size": "100%",
+                    "caption": "Image 2: Close up of engrave pattern"
+                },
+                {
+                    "url": "assets/images/projects/ms0gkpfwx4t9-IMG_4095.jpg",
+                    "size": "100%",
+                    "caption": "Image 3: Cnc engraved panel"
+                },
+                {
+                    "url": "assets/images/projects/ms0gkssgz236-IMG_4110.jpg",
+                    "size": "100%",
+                    "caption": "Image 4: Cnc engraved panel with lacquer inlay "
+                },
+                {
+                    "url": "assets/images/projects/ms0gl34z5msf-IMG_4327.jpg",
+                    "size": "100%",
+                    "caption": "Image 5: Finished base to lay the painting on"
+                },
+                {
+                    "url": "assets/images/projects/ms0gmsaef8ys-Screenshot_2026-06-28_001730.png",
+                    "size": "100%",
+                    "caption": "Image 6: Fully finished Easel"
                 }
             ],
             "id": 8,
