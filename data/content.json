@@ -5,7 +5,7 @@
             "name": "Orbis Generative Art",
             "previewImage": "assets/images/uploads/mrzq9byrkip2-Screenshot_2026-06-28_122747.png",
             "description": "The procedural particle system uses equations to draw cosmic shapes and then animate them",
-            "fullDescription": "This project explores the emerging complexity and entropy of systems in beautiful mathematical ways.\n\n The math layout is as follows:\n\n pick an arbitrary starting point s₀ in ℝ². The first ~20 iterations get discarded because you're not yet on the attractor — you're just letting the chaos game \\\"settle in.\\\"\\n\\n2 \n At each iteration, the program randomly picks one of N weighted transform functions fᵢ and applies it: sⱼ = fᵢ(sⱼ₋₁). Each function is an affine transform of the form F(x,y) = (ax + by + c, dx + ey + f). This controls the rotation, scaling, and shear from a 6-parameter matrix \n\n The nonlinear variation functions this causes the divergence from the main paths and the quote streakiness. Applying one or more nonlinear variations Vₙ(x,y) gives other effects to it.\n\n Log-density accumulation. Instead of plotting each point directly, you maintain a histogram: each pixel keeps a hit count. You run millions of iterations and accumulate. The flame algorithm solves the problem of high-density areas clipping by using a logarithmic map from density to brightness, so brightness = log(hit_count).\n\nlastly is the filters and colouring over it, which is just changing the colours, but it does make them look very cool.",
+            "fullDescription": "This project explores the emerging complexity and entropy of systems in beautiful mathematical ways.\n\n The math layout is as follows:\n\n pick an arbitrary starting point s₀ in ℝ². The first ~20 iterations get discarded because you're not yet on the attractor, just letting the chaos game \"settle in.\n\n At each iteration, the program randomly picks one of N weighted transform functions fᵢ and applies it: sⱼ = fᵢ(sⱼ₋₁). Each function is an affine transform of the form F(x,y) = (ax + by + c, dx + ey + f). This controls the rotation, scaling, and shear from a 6-parameter matrix \n\n The nonlinear variation functions this causes the divergence from the main paths and the quote streakiness. Applying one or more nonlinear variations Vₙ(x,y) gives other effects to it.\n\n Log-density accumulation. Instead of plotting each point directly, you maintain a histogram: each pixel keeps a hit count. You run millions of iterations and accumulate. The flame algorithm solves the problem of high-density areas clipping by using a logarithmic map from density to brightness, so brightness = log(hit_count).\n\nlastly is the filters and colouring over it, which is just changing the colours, but it does make them look very cool.",
             "stack": [
                 "Three.js",
                 "JavaScript",
@@ -78,36 +78,6 @@
             "previewImage": "assets/images/uploads/mrzqaot003e7-Screenshot_2026-06-28_001730.png",
             "previewImageFit": "contain",
             "previewImagePosition": "center center"
-        },
-        {
-            "name": "New Project",
-            "description": "Project description",
-            "fullDescription": "Full project description",
-            "previewImage": "assets/images/uploads/1783880723959-Screenshot_2026-06-30_232418.png",
-            "stack": [
-                "Tech1",
-                "Tech2"
-            ],
-            "github": "",
-            "links": [],
-            "photos": [],
-            "id": 9
-        },
-        {
-            "name": "New Project",
-            "description": "Project description",
-            "fullDescription": "Full project description",
-            "previewImage": "",
-            "previewImageFit": "cover",
-            "previewImagePosition": "center center",
-            "stack": [
-                "Tech1",
-                "Tech2"
-            ],
-            "github": "",
-            "links": [],
-            "photos": [],
-            "id": 10
         }
     ],
     "writing": [],
