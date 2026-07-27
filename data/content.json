@@ -83,11 +83,13 @@
     "writing": [],
     "gallery": [],
     "links": {
-        "email": "jmarshallapplications@gmail.com"
+        "email": "jmarshallapplications@gmail.com",
+        "github": "https://github.com/MARS-011",
+        "linkedin": "https://www.linkedin.com/in/jackson-marshall-225355358/"
     },
     "bio": {
         "content": "I'm a chemical engineering student showcasing my work and art all in one place. Behind this text is a video of an animated equation stylized and generated in a program I made. I'm deeply interested in chemistry, materials science, stats, nuclear energy, rocketry, and art, both virtual and tangible. \n",
-        "aboutText": "nothing",
+        "aboutText": "For example ....nothing",
         "certifications": [
             "Google Cyber Security",
             "WHIMIS",
