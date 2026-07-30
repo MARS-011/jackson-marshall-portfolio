@@ -68,17 +68,10 @@ function renderFallbackGrid(projects) {
 
 async function initializeCardAnimations() {
     const projects = DataManager.getProjects();
-    const shelfStage = document.getElementById('shelfStage');
+    const stripeBooksContainer = document.getElementById('stripeBooksContainer');
 
-    const canUseShelf = shelfStage &&
-        typeof ShelfScene !== 'undefined' &&
-        typeof THREE !== 'undefined' &&
-        ShelfScene.supportsWebGL() &&
-        window.innerWidth >= 640;
-
-    if (canUseShelf) {
-        const ok = await ShelfScene.init(shelfStage, projects, (project) => openProjectDetail(project));
-        if (!ok) renderFallbackGrid(projects);
+    if (stripeBooksContainer && typeof StripeBooks !== 'undefined') {
+        StripeBooks.init(stripeBooksContainer, projects, (project) => openProjectDetail(project));
     } else {
         renderFallbackGrid(projects);
     }
@@ -118,11 +111,17 @@ function openProjectDetail(project) {
         </header>
 
         <div class="detail-body">
-            ${(project.previewImage && String(project.previewImage).trim() !== '') ? `
-                <div class="detail-preview-image" style="margin-bottom: 3rem;">
-                    <img src="${String(project.previewImage)}" alt="${project.name} Preview" style="width: 100%; max-width: 1000px; border: 1px solid rgba(184, 197, 255, 0.2); display: block; margin: 0 auto;">
-                </div>
-            ` : ''}
+            <!-- Project Video Aesthetic -->
+            <div class="detail-video-wrapper" style="width: 100%; height: 300px; overflow: hidden; margin-bottom: 3rem; border: 1px solid rgba(184, 197, 255, 0.1); border-radius: 4px; position: relative;">
+                <video autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;">
+                    <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
+                    <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
+                </video>
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent, rgba(15, 17, 26, 0.8));"></div>
+                ${(project.previewImage && String(project.previewImage).trim() !== '') ? `
+                    <img src="${String(project.previewImage)}" alt="${project.name} Preview" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 80%; width: auto; max-width: 90%; object-fit: contain; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));">
+                ` : ''}
+            </div>
             <div class="detail-description">${DataManager.formatText(project.fullDescription)}</div>
         </div>
 

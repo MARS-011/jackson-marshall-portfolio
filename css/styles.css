@@ -1353,3 +1353,167 @@ body.overlay-open {
         filter: none !important;
     }
 }
+
+/* ============================================================================
+   STRIPE PRESS STYLE REDESIGN
+   ============================================================================ */
+
+.projects-page-body {
+    background-color: #0f111a; /* Darker, more clinical background */
+}
+
+.projects-page-body .bg-video {
+    display: none; /* Remove background video for projects page as requested */
+}
+
+.stripe-press-container {
+    padding: 4rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.books-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 4rem 2rem;
+    justify-items: center;
+}
+
+.book-item {
+    width: 220px;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: fadeInUp 0.8s both var(--delay);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.book-visual {
+    position: relative;
+    width: 200px;
+    height: 280px;
+    perspective: 1000px;
+    margin-bottom: 2rem;
+}
+
+.book-3d {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(-25deg);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.book-item:hover .book-3d {
+    transform: rotateY(-5deg) rotateX(5deg);
+}
+
+.book-front, .book-spine, .book-top {
+    position: absolute;
+    background: #1a1d2e;
+}
+
+.book-front {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    transform: translateZ(20px);
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.5);
+    overflow: hidden;
+    border-radius: 2px 4px 4px 2px;
+}
+
+.book-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.05) 5%, transparent 15%);
+}
+
+.book-spine {
+    width: 40px;
+    height: 100%;
+    left: -20px;
+    top: 0;
+    transform: rotateY(-90deg);
+    background: #141726;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px 0 0 2px;
+}
+
+.spine-text {
+    transform: rotate(90deg);
+    white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(184, 197, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: 240px;
+    text-align: center;
+}
+
+.book-top {
+    width: 100%;
+    height: 40px;
+    left: 0;
+    top: -20px;
+    transform: rotateX(90deg);
+    background: #2a2e45;
+}
+
+.book-info {
+    text-align: left;
+    margin-top: 1rem;
+}
+
+.book-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--color-ink);
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.book-author {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Projects page specific overrides */
+.projects-header {
+    text-align: center;
+    padding: 6rem 2rem 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.projects-header .page-title {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.projects-header .page-subtitle {
+    color: var(--color-muted);
+    font-size: 1.1rem;
+    max-width: 60ch;
+    margin: 0 auto;
+}
