@@ -13,28 +13,31 @@ let lenis = PortfolioEffects.initLenis();
    CARD RENDERING & ANIMATIONS
    ============================================================================ */
 
-function initializeCardAnimations() {
-    const projectsGrid = document.querySelector('.projects-grid');
-    const projects = DataManager.getProjects();
+function renderFallbackGrid(projects) {
+    const shelfStage = document.getElementById('shelfStage');
+    const fallbackGrid = document.getElementById('fallbackGrid');
+    const hint = document.querySelector('.shelf-hint');
+    if (shelfStage) shelfStage.style.display = 'none';
+    if (hint) hint.style.display = 'none';
+    if (!fallbackGrid) return;
 
-    if (projectsGrid) {
-        projectsGrid.innerHTML = projects.map(project => `
-            <div class="project-card-expandable" data-id="${project.id}">
-                ${project.previewImage ? `
-                    <div class="project-card-preview">
-                        <img src="${project.previewImage}" alt="${project.name}" loading="lazy" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
-                    </div>
-                ` : ''}
-                <div class="project-card-content">
-                    <h3 class="card-title">${project.name}</h3>
-                    <p class="card-description">${project.description}</p>
-                    <div class="card-tags">
-                        ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
+    fallbackGrid.style.display = 'grid';
+    fallbackGrid.innerHTML = projects.map(project => `
+        <div class="project-card-expandable" data-id="${project.id}">
+            ${project.previewImage ? `
+                <div class="project-card-preview">
+                    <img src="${project.previewImage}" alt="${project.name}" loading="lazy" style="object-fit: ${project.previewImageFit || 'cover'}; object-position: ${project.previewImagePosition || 'center center'};">
+                </div>
+            ` : ''}
+            <div class="project-card-content">
+                <h3 class="card-title">${project.name}</h3>
+                <p class="card-description">${project.description}</p>
+                <div class="card-tags">
+                    ${project.stack.map(tag => `<span class="tag">${tag}</span>`).join('')}
                 </div>
             </div>
-        `).join('');
-    }
+        </div>
+    `).join('');
 
     const cards = document.querySelectorAll('.project-card-expandable');
 
@@ -46,7 +49,7 @@ function initializeCardAnimations() {
     cards.forEach((card) => {
         card.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') return;
-            
+
             const projectId = parseInt(card.getAttribute('data-id'));
             const project = projects.find(p => p.id === projectId);
             if (project) {
@@ -61,6 +64,24 @@ function initializeCardAnimations() {
             gsap.to(card, { boxShadow: 'none', duration: 0.3, overwrite: 'auto' });
         });
     });
+}
+
+async function initializeCardAnimations() {
+    const projects = DataManager.getProjects();
+    const shelfStage = document.getElementById('shelfStage');
+
+    const canUseShelf = shelfStage &&
+        typeof ShelfScene !== 'undefined' &&
+        typeof THREE !== 'undefined' &&
+        ShelfScene.supportsWebGL() &&
+        window.innerWidth >= 640;
+
+    if (canUseShelf) {
+        const ok = await ShelfScene.init(shelfStage, projects, (project) => openProjectDetail(project));
+        if (!ok) renderFallbackGrid(projects);
+    } else {
+        renderFallbackGrid(projects);
+    }
 }
 
 /* ============================================================================
@@ -189,7 +210,7 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await DataManager.initialize();
-    initializeCardAnimations();
+    await initializeCardAnimations();
     
     // Check for project ID in URL
     const urlParams = new URLSearchParams(window.location.search);
