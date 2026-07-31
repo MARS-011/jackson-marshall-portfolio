@@ -31,6 +31,7 @@ const ShelfScene = (() => {
     let projectsRef = [];
     let animationId = null;
     let resizeObserver = null;
+    let activeBook = null;
 
     function supportsWebGL() {
         try {
@@ -158,6 +159,7 @@ const ShelfScene = (() => {
             book.rotation.z = tilt;
             book.userData.project = project;
             book.userData.baseY = book.position.y;
+            book.userData.baseRotZ = tilt;
             book.castShadow = false;
 
             group.add(book);
@@ -173,13 +175,73 @@ const ShelfScene = (() => {
     }
 
     function onClick() {
-        if (hovered && typeof onSelectCallback === 'function') {
-            onSelectCallback(hovered.userData.project);
+        if (activeBook) return; // one book at a time — ignore clicks mid-presentation
+        if (hovered) {
+            presentBook(hovered);
         }
     }
 
+    // Springs the clicked book forward off the shelf toward the camera, then
+    // opens the detail overlay once it settles — the "pull it forward and
+    // inspect it" motion referenced in the shelf hint text.
+    function presentBook(mesh) {
+        activeBook = mesh;
+        hovered = null;
+        container.style.cursor = 'default';
+        if (controls) controls.enabled = false;
+
+        const target = {
+            y: mesh.userData.baseY + 0.55,
+            z: mesh.position.z + 1.6,
+            rotZ: 0,
+            scale: 1.32
+        };
+
+        if (typeof gsap !== 'undefined') {
+            gsap.to(mesh.position, { y: target.y, z: target.z, duration: 0.55, ease: 'back.out(1.6)' });
+            gsap.to(mesh.rotation, { z: target.rotZ, y: mesh.rotation.y + Math.PI * 0.06, duration: 0.55, ease: 'back.out(1.6)' });
+            gsap.to(mesh.scale, {
+                x: target.scale, y: target.scale, z: target.scale,
+                duration: 0.55, ease: 'back.out(1.6)',
+                onComplete: () => {
+                    if (typeof onSelectCallback === 'function') onSelectCallback(mesh.userData.project);
+                }
+            });
+        } else {
+            mesh.position.y = target.y;
+            mesh.position.z = target.z;
+            mesh.rotation.z = target.rotZ;
+            mesh.scale.setScalar(target.scale);
+            if (typeof onSelectCallback === 'function') onSelectCallback(mesh.userData.project);
+        }
+    }
+
+    // Called once the detail overlay closes, to settle the presented book
+    // back onto the shelf and re-enable browsing.
+    function returnActiveBook() {
+        const mesh = activeBook;
+        if (!mesh) return;
+        activeBook = null;
+
+        const baseZ = 0.05;
+        const baseRotZ = mesh.userData.baseRotZ ?? 0;
+
+        if (typeof gsap !== 'undefined') {
+            gsap.to(mesh.position, { y: mesh.userData.baseY, z: baseZ, duration: 0.45, ease: 'power2.inOut' });
+            gsap.to(mesh.rotation, { z: baseRotZ, y: 0, duration: 0.45, ease: 'power2.inOut' });
+            gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.45, ease: 'power2.inOut' });
+        } else {
+            mesh.position.y = mesh.userData.baseY;
+            mesh.position.z = baseZ;
+            mesh.rotation.z = baseRotZ;
+            mesh.scale.setScalar(1);
+        }
+
+        if (controls) controls.enabled = true;
+    }
+
     function updateHover() {
-        if (!booksGroup) return;
+        if (!booksGroup || activeBook) return; // don't steal hover from a presented book
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(booksGroup.children);
 
@@ -297,5 +359,5 @@ const ShelfScene = (() => {
         if (renderer) renderer.dispose();
     }
 
-    return { init, destroy, supportsWebGL };
+    return { init, destroy, supportsWebGL, returnActiveBook };
 })();
