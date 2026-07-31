@@ -68,9 +68,11 @@
 
         <!-- Projects Display -->
         <section class="projects-container">
-            <div id="stripeBooksContainer">
-                <div class="loading-placeholder">[LOADING_PROJECTS...]</div>
+            <div id="shelfStage" class="shelf-stage">
+                <div class="loading-placeholder">[LOADING_SHELF...]</div>
             </div>
+            <p class="shelf-hint">Click a book to pull it forward and inspect it — drag to look around the shelf.</p>
+            <div id="fallbackGrid" class="projects-grid" style="display: none;"></div>
         </section>
 
     </div>
@@ -96,7 +98,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
     <script src="js/effects.js" defer></script>
     <script src="js/data.js" defer></script>
-    <script src="js/stripe-books.js" defer></script>
+    <script src="js/shelf-3d.js" defer></script>
     <script src="js/projects.js" defer></script>
 </body>
 </html>
