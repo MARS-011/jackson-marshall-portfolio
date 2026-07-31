@@ -68,13 +68,19 @@ function renderFallbackGrid(projects) {
 
 async function initializeCardAnimations() {
     const projects = DataManager.getProjects();
-    const stripeBooksContainer = document.getElementById('stripeBooksContainer');
+    const shelfStage = document.getElementById('shelfStage');
 
-    if (stripeBooksContainer && typeof StripeBooks !== 'undefined') {
-        StripeBooks.init(stripeBooksContainer, projects, (project) => openProjectDetail(project));
-    } else {
-        renderFallbackGrid(projects);
+    const canUseShelf = shelfStage
+        && typeof ShelfScene !== 'undefined'
+        && ShelfScene.supportsWebGL()
+        && window.innerWidth >= 640;
+
+    if (canUseShelf) {
+        const started = await ShelfScene.init(shelfStage, projects, (project) => openProjectDetail(project));
+        if (started) return;
     }
+
+    renderFallbackGrid(projects);
 }
 
 /* ============================================================================
@@ -194,6 +200,7 @@ function closeProjectDetail() {
             detailContent.innerHTML = '';
             document.body.classList.remove('overlay-open');
             if (lenis) lenis.start();
+            if (typeof ShelfScene !== 'undefined') ShelfScene.returnActiveBook();
         }
     });
 }
