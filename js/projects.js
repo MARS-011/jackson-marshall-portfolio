@@ -13,16 +13,11 @@ let lenis = PortfolioEffects.initLenis();
    CARD RENDERING & ANIMATIONS
    ============================================================================ */
 
-function renderFallbackGrid(projects) {
-    const shelfStage = document.getElementById('shelfStage');
-    const fallbackGrid = document.getElementById('fallbackGrid');
-    const hint = document.querySelector('.shelf-hint');
-    if (shelfStage) shelfStage.style.display = 'none';
-    if (hint) hint.style.display = 'none';
-    if (!fallbackGrid) return;
+function renderProjectsGrid(projects) {
+    const projectsGrid = document.getElementById('fallbackGrid');
+    if (!projectsGrid) return;
 
-    fallbackGrid.style.display = 'grid';
-    fallbackGrid.innerHTML = projects.map(project => `
+    projectsGrid.innerHTML = projects.map(project => `
         <div class="project-card-expandable" data-id="${project.id}">
             ${project.previewImage ? `
                 <div class="project-card-preview">
@@ -66,21 +61,9 @@ function renderFallbackGrid(projects) {
     });
 }
 
-async function initializeCardAnimations() {
+function initializeCardAnimations() {
     const projects = DataManager.getProjects();
-    const shelfStage = document.getElementById('shelfStage');
-
-    const canUseShelf = shelfStage
-        && typeof ShelfScene !== 'undefined'
-        && ShelfScene.supportsWebGL()
-        && window.innerWidth >= 640;
-
-    if (canUseShelf) {
-        const started = await ShelfScene.init(shelfStage, projects, (project) => openProjectDetail(project));
-        if (started) return;
-    }
-
-    renderFallbackGrid(projects);
+    renderProjectsGrid(projects);
 }
 
 /* ============================================================================
@@ -200,7 +183,6 @@ function closeProjectDetail() {
             detailContent.innerHTML = '';
             document.body.classList.remove('overlay-open');
             if (lenis) lenis.start();
-            if (typeof ShelfScene !== 'undefined') ShelfScene.returnActiveBook();
         }
     });
 }
@@ -216,7 +198,7 @@ document.addEventListener('keydown', (e) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await DataManager.initialize();
-    await initializeCardAnimations();
+    initializeCardAnimations();
     
     // Check for project ID in URL
     const urlParams = new URLSearchParams(window.location.search);
