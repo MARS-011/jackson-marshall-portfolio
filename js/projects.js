@@ -222,3 +222,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     console.log('Projects Page — Initialized');
 });
+
