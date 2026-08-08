@@ -203,9 +203,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Hide loading screen
     const loadingScreen = document.getElementById('horseLoadingScreen');
     if (loadingScreen) {
+        // Give the horse a moment to be seen
         setTimeout(() => {
             loadingScreen.classList.add('hidden');
-        }, 300);
+        }, 800);
     }
     
     // Check for project ID in URL
