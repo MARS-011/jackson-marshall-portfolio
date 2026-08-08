@@ -78,6 +78,26 @@
             "previewImage": "assets/images/uploads/mrzqaot003e7-Screenshot_2026-06-28_001730.png",
             "previewImageFit": "contain",
             "previewImagePosition": "center center"
+        },
+        {
+            "name": "Citro Bar ",
+            "description": "A group project on creating a commercial body soap from natural ingredients. Our goal was to fulfill a section in the market we saw was ",
+            "fullDescription": "Full project description",
+            "previewImage": "",
+            "previewImageFit": "cover",
+            "previewImagePosition": "center center",
+            "stack": [
+                "Blender",
+                "Solid Works"
+            ],
+            "github": "",
+            "links": [
+                {
+                    "label": "https://dalu-my.sharepoint.com/:w:/g/personal/jc530968_dal_ca/IQBgW0QhDcsnQZmIkIZsevAmAbd7rI9nmnG0toK2cxTMoLc?e=8bRzYk"
+                }
+            ],
+            "photos": [],
+            "id": 9
         }
     ],
     "writing": [],
