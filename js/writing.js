@@ -130,6 +130,14 @@ if (bgVideo) {
 document.addEventListener('DOMContentLoaded', async () => {
     await DataManager.initialize();
     renderArticles();
+    
+    // Hide loading screen
+    const loadingScreen = document.getElementById('horseLoadingScreen');
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 300);
+    }
 
     const pageTitle    = document.querySelector('.page-title');
     const pageSubtitle = document.querySelector('.page-subtitle');

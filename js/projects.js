@@ -200,6 +200,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     await DataManager.initialize();
     initializeCardAnimations();
     
+    // Hide loading screen
+    const loadingScreen = document.getElementById('horseLoadingScreen');
+    if (loadingScreen) {
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 300);
+    }
+    
     // Check for project ID in URL
     const urlParams = new URLSearchParams(window.location.search);
     const projectId = urlParams.get('id');
