@@ -38,12 +38,13 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     object-fit: cover;
     z-index: 0;
     opacity: 0.6;
     pointer-events: none;
+    display: block;
 }
 
 /* ============================================================================
@@ -1316,14 +1317,18 @@ body.overlay-open {
    STRIPE PRESS STYLE REDESIGN
    ============================================================================ */
 
-.projects-page-body {
-    background-color: #0f111a; /* Darker, more clinical background */
+.projects-page-body,
+.writing-page-body,
+.gallery-page-body {
+    background-color: #0a0e2e;
 }
 
-.projects-page-body .bg-video {
+.projects-page-body .bg-video,
+.writing-page-body .bg-video,
+.gallery-page-body .bg-video {
     display: block;
-    opacity: 0.3; /* Lower opacity for projects page to keep grid readable */
-} /* Remove background video for projects page as requested */
+    opacity: 0.5; /* Slightly lower opacity for sub-pages to maintain readability */
+}
 
 .stripe-press-container {
     padding: 4rem 2rem;
