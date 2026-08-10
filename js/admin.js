@@ -301,7 +301,8 @@ async function handleMediaFiles(zone, files) {
         alert(`Couldn't process image: ${error.message}`);
     } finally {
         zone.classList.remove('is-processing');
-        if (zone.querySelector('p')) zone.querySelector('p').textContent = originalText;
+        const p = zone.querySelector('p');
+        if (p) p.textContent = originalText;
         renderProjectsEditor();
     }
 }
@@ -395,12 +396,13 @@ function updateProjectPhoto(projectId, photoIndex, field, value) {
     if (!project) return;
 
     const newPhotos = [...(project.photos || [])];
-    if (typeof newPhotos[photoIndex] !== 'object') {
-        newPhotos[photoIndex] = { url: newPhotos[photoIndex], size: '100%' };
+    if (typeof newPhotos[photoIndex] !== 'object' || newPhotos[photoIndex] === null) {
+        newPhotos[photoIndex] = { url: newPhotos[photoIndex] || '', size: '100%' };
     }
     newPhotos[photoIndex][field] = value;
     
     DataManager.updateProject(projectId, { photos: newPhotos });
+    // No re-render here to avoid losing focus while typing captions
 }
 
 function removeProjectPhoto(projectId, photoIndex) {
@@ -425,24 +427,34 @@ function deleteProject(id) {
 }
 
 document.getElementById('addProjectButton')?.addEventListener('click', () => {
-		    const newProject = {
-		        name: 'New Project',
-		        description: 'Project description',
-		        fullDescription: 'Full project description',
-                previewImage: '',
-                previewImageFit: 'cover',
-                previewImagePosition: 'center center',
-		        stack: ['Tech1', 'Tech2'],
-		        github: '',
-	            links: [],
-	            photos: []
-		    };
-    DataManager.addProject(newProject);
+    const newProject = {
+        name: 'New Project',
+        description: 'Project description',
+        fullDescription: 'Full project description',
+        previewImage: '',
+        previewImageFit: 'cover',
+        previewImagePosition: 'center center',
+        stack: ['Tech1', 'Tech2'],
+        github: '',
+        links: [],
+        photos: []
+    };
+    const added = DataManager.addProject(newProject);
     renderProjectsEditor();
+    
+    // Scroll to the new project
+    setTimeout(() => {
+        const items = document.querySelectorAll('.editor-item');
+        if (items.length > 0) {
+            items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            items[items.length - 1].style.boxShadow = '0 0 20px rgba(184, 197, 255, 0.3)';
+            setTimeout(() => { items[items.length - 1].style.boxShadow = 'none'; }, 2000);
+        }
+    }, 100);
 });
 
 document.getElementById('saveProjectsButton')?.addEventListener('click', () => {
-    alert('Projects saved!');
+    alert('Changes saved to local draft! Remember to click "PUBLISH TO GITHUB" at the top to push your changes to the live site.');
 });
 
 // ============================================================================
@@ -506,7 +518,7 @@ document.getElementById('addArticleButton')?.addEventListener('click', () => {
 });
 
 document.getElementById('saveWritingButton')?.addEventListener('click', () => {
-    alert('Writing saved!');
+    alert('Changes saved to local draft! Remember to click "PUBLISH TO GITHUB" at the top to push your changes to the live site.');
 });
 
 // ============================================================================
@@ -557,7 +569,7 @@ async function handleGalleryUpload(id, event) {
 }
 
 document.getElementById('saveGalleryButton')?.addEventListener('click', () => {
-    alert('Gallery saved!');
+    alert('Changes saved to local draft! Remember to click "PUBLISH TO GITHUB" at the top to push your changes to the live site.');
 });
 
 // ============================================================================
@@ -605,7 +617,7 @@ function updateBioData() {
 }
 
 document.getElementById('saveBioButton')?.addEventListener('click', () => {
-    alert('Bio saved!');
+    alert('Changes saved to local draft! Remember to click "PUBLISH TO GITHUB" at the top to push your changes to the live site.');
 });
 
 // ============================================================================
@@ -648,7 +660,7 @@ function updateLink(field, value) {
 }
 
 document.getElementById('saveLinksButton')?.addEventListener('click', () => {
-    alert('Links saved!');
+    alert('Changes saved to local draft! Remember to click "PUBLISH TO GITHUB" at the top to push your changes to the live site.');
 });
 
 // ============================================================================

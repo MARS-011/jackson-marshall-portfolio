@@ -1321,8 +1321,9 @@ body.overlay-open {
 }
 
 .projects-page-body .bg-video {
-    display: none; /* Remove background video for projects page as requested */
-}
+    display: block;
+    opacity: 0.3; /* Lower opacity for projects page to keep grid readable */
+} /* Remove background video for projects page as requested */
 
 .stripe-press-container {
     padding: 4rem 2rem;
@@ -1502,7 +1503,8 @@ body.overlay-open {
 }
 
 .loading-video-container {
-    width: 300px;
+    width: 90%;
+    max-width: 600px;
     height: auto;
     margin-bottom: 1.5rem;
     border-radius: 4px;

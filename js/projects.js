@@ -101,8 +101,8 @@ function openProjectDetail(project) {
 
         <div class="detail-body">
             <!-- Project Video Aesthetic -->
-            <div class="detail-video-wrapper" style="width: 100%; height: 300px; overflow: hidden; margin-bottom: 3rem; border: 1px solid rgba(184, 197, 255, 0.1); border-radius: 4px; position: relative;">
-                <video autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0.5;">
+            <div class="detail-video-wrapper" style="width: 100%; aspect-ratio: 16/9; max-height: 60vh; overflow: hidden; margin-bottom: 3rem; border: 1px solid rgba(184, 197, 255, 0.1); border-radius: 4px; position: relative;">
+                <video autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0.4;">
                     <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
                     <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
                 </video>
