@@ -118,7 +118,7 @@ function openProjectDetail(project) {
 	                    return `
 	                        <div class="detail-photo-item" style="width: ${size}; margin: 0 auto; margin-bottom: 2rem;">
 	                            <img src="${src}" alt="${project.name}" style="width: 100%; display: block; margin-bottom: 0.75rem;" loading="lazy">
-	                            ${isObject && photo.caption ? `<p class="detail-photo-caption" style="font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: #5a6490; text-align: center;">${photo.caption}</p>` : ''}
+	                            ${isObject && photo.caption ? `<p class="detail-photo-caption">${photo.caption}</p>` : ''}
 	                        </div>
 	                    `;
                 }).join('')}

@@ -636,6 +636,15 @@ p {
    PROJECT DETAIL OVERLAY
    ============================================================================ */
 
+.detail-photo-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.6rem !important;
+    color: #5a6490;
+    text-align: center;
+    margin-top: 0.75rem;
+    line-height: 1.4;
+}
+
 .project-detail-overlay {
     position: fixed;
     top: 0;
@@ -1514,7 +1523,7 @@ body.overlay-open > .bg-video {
 
 .loading-video-container {
     width: 90%;
-    max-width: 450px;
+    max-width: 225px;
     height: auto;
     margin-bottom: 1.5rem;
     border-radius: 4px;
