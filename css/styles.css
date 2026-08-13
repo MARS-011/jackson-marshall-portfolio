@@ -1255,8 +1255,8 @@ body.overlay-open > .bg-video {
     opacity: 0;
     transition: opacity 0.2s ease, width 0.25s ease, height 0.25s ease;
     margin: -14px 0 0 -14px;
-    color: var(--color-lavender);
-    filter: drop-shadow(0 0 8px rgba(var(--color-lavender-rgb), 0.35));
+    color: #FFFFFF;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
 }
 
 .cursor-reticle.is-visible {
@@ -1274,27 +1274,21 @@ body.overlay-open > .bg-video {
     inset: 0;
     border: 1px solid currentColor;
     border-radius: 50%;
+    opacity: 0.4;
 }
 
-.cursor-reticle__crosshair::before,
-.cursor-reticle__crosshair::after {
-    content: '';
+.cursor-reticle__icon {
     position: absolute;
-    background: currentColor;
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    object-fit: contain;
+    transform: rotate(145deg);
+    transition: transform 0.3s ease;
 }
 
-.cursor-reticle__crosshair::before {
-    top: 50%;
-    left: -5px;
-    right: -5px;
-    height: 1px;
-}
-
-.cursor-reticle__crosshair::after {
-    top: -5px;
-    bottom: -5px;
-    left: 50%;
-    width: 1px;
+.cursor-reticle.is-active .cursor-reticle__icon {
+    transform: rotate(145deg) scale(1.1);
 }
 
 .cursor-reticle__label {
@@ -1305,7 +1299,7 @@ body.overlay-open > .bg-video {
     font: 0.55rem/1 'IBM Plex Mono', monospace;
     letter-spacing: 0.15em;
     white-space: nowrap;
-    color: var(--color-lavender);
+    color: #FFFFFF;
 }
 
 @keyframes grain-shift {

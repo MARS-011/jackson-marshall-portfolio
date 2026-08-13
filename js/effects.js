@@ -68,7 +68,7 @@ const PortfolioEffects = (function () {
         const cursor = document.createElement('div');
         cursor.className = 'cursor-reticle';
         cursor.setAttribute('aria-hidden', 'true');
-        cursor.innerHTML = '<span class="cursor-reticle__ring"></span><span class="cursor-reticle__crosshair"></span><span class="cursor-reticle__label"></span>';
+        cursor.innerHTML = '<span class="cursor-reticle__ring"></span><img src="assets/images/custom-cursor.svg" class="cursor-reticle__icon" alt=""><span class="cursor-reticle__label"></span>';
         document.body.appendChild(cursor);
         document.body.classList.add('has-custom-cursor');
 
