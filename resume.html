@@ -25,6 +25,14 @@
             width: 100%;
             display: block;
         }
+        .resume-3d-text {
+            margin: 1rem auto 4rem;
+            position: relative;
+            z-index: 2;
+        }
+        .resume-3d-text .three-d-text-stage {
+            width: min(65vw, 720px);
+        }
         .back-btn {
             position: fixed;
             top: 2rem;
@@ -68,10 +76,23 @@
         <img src="assets/docs/resume-1.png" alt="Jackson Marshall Resume" class="resume-image">
     </div>
 
+    <section class="footer-3d-container resume-3d-text" aria-label="Interactive rotating message">
+        <div id="resume-3d-text-stage" class="three-d-text-stage"></div>
+    </section>
+
     <!-- Background Video (kept for consistency with site theme, but at low opacity) -->
     <video class="bg-video" autoplay muted playsinline loop style="opacity: 0.15; z-index: -1;">
         <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
         <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
     </video>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="js/effects.js" defer></script>
+    <script src="js/3d-text.js" defer></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof BarText3D !== 'undefined') BarText3D.init('resume-3d-text-stage');
+        });
+    </script>
 </body>
 </html>

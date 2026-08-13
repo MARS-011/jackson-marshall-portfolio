@@ -1248,13 +1248,13 @@ body.overlay-open > .bg-video {
     position: fixed;
     top: 0;
     left: 0;
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     z-index: 200000;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s ease, width 0.25s ease, height 0.25s ease;
-    margin: -14px 0 0 -14px;
+    margin: -17px 0 0 -17px;
     color: #FFFFFF;
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
 }
@@ -1264,17 +1264,9 @@ body.overlay-open > .bg-video {
 }
 
 .cursor-reticle.is-active {
-    width: 40px;
-    height: 40px;
-    margin: -20px 0 0 -20px;
-}
-
-.cursor-reticle__ring {
-    position: absolute;
-    inset: 0;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    opacity: 0.4;
+    width: 48px;
+    height: 48px;
+    margin: -24px 0 0 -24px;
 }
 
 .cursor-reticle__icon {
