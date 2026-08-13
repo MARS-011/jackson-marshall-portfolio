@@ -3,9 +3,9 @@
         {
             "id": 7,
             "name": "Orbis Generative Art",
-            "previewImage": "assets/images/uploads/mrzq9byrkip2-Screenshot_2026-06-28_122747.png",
+            "previewImage": "assets/images/uploads/mrzq9byrkip2-Screenshot_2026-06-28_122747.webp",
             "description": "The procedural particle system uses equations to draw cosmic shapes and then animate them",
-            "fullDescription": "This project explores the emerging complexity and entropy of systems in beautiful mathematical ways.\n\n The math layout is as follows:\n\n pick an arbitrary starting point s₀ in ℝ². The first ~20 iterations get discarded because you're not yet on the attractor, just letting the chaos game \"settle in.\n\n At each iteration, the program randomly picks one of N weighted transform functions fᵢ and applies it: sⱼ = fᵢ(sⱼ₋₁). Each function is an affine transform of the form F(x,y) = (ax + by + c, dx + ey + f). This controls the rotation, scaling, and shear from a 6-parameter matrix \n\n The nonlinear variation functions this causes the divergence from the main paths and the quote streakiness. Applying one or more nonlinear variations Vₙ(x,y) gives other effects to it.\n\n Log-density accumulation. Instead of plotting each point directly, you maintain a histogram: each pixel keeps a hit count. You run millions of iterations and accumulate. The flame algorithm solves the problem of high-density areas clipping by using a logarithmic map from density to brightness, so brightness = log(hit_count).\n\nlastly is the filters and colouring over it, which is just changing the colours, but it does make them look very cool.",
+            "fullDescription": "This project explores the emerging complexity and entropy of systems in beautiful mathematical ways.\n\n The math layout is as follows:\n\n pick an arbitrary starting point s\u2080 in \u211d\u00b2. The first ~20 iterations get discarded because you're not yet on the attractor, just letting the chaos game \"settle in.\n\n At each iteration, the program randomly picks one of N weighted transform functions f\u1d62 and applies it: s\u2c7c = f\u1d62(s\u2c7c\u208b\u2081). Each function is an affine transform of the form F(x,y) = (ax + by + c, dx + ey + f). This controls the rotation, scaling, and shear from a 6-parameter matrix \n\n The nonlinear variation functions this causes the divergence from the main paths and the quote streakiness. Applying one or more nonlinear variations V\u2099(x,y) gives other effects to it.\n\n Log-density accumulation. Instead of plotting each point directly, you maintain a histogram: each pixel keeps a hit count. You run millions of iterations and accumulate. The flame algorithm solves the problem of high-density areas clipping by using a logarithmic map from density to brightness, so brightness = log(hit_count).\n\nlastly is the filters and colouring over it, which is just changing the colours, but it does make them look very cool.",
             "stack": [
                 "Three.js",
                 "JavaScript",
@@ -15,19 +15,19 @@
             "links": [],
             "photos": [
                 {
-                    "url": "assets/images/projects/ms0gx3xd0pth-orbis_flame_1x_1777677780789.png",
+                    "url": "assets/images/projects/ms0gx3xd0pth-orbis_flame_1x_1777677780789.webp",
                     "size": "100%"
                 },
                 {
-                    "url": "assets/images/projects/ms0h09nrvbl8-orbis_anim_1784989977361.png",
+                    "url": "assets/images/projects/ms0h09nrvbl8-orbis_anim_1784989977361.webp",
                     "size": "100%"
                 },
                 {
-                    "url": "assets/images/projects/ms0h6cfq19df-orbis_attractor_1784990107941.png",
+                    "url": "assets/images/projects/ms0h6cfq19df-orbis_attractor_1784990107941.webp",
                     "size": "100%"
                 },
                 {
-                    "url": "assets/images/projects/ms0h6dtk9jij-orbis_attractor_1784990158318.png",
+                    "url": "assets/images/projects/ms0h6dtk9jij-orbis_attractor_1784990158318.webp",
                     "size": "100%"
                 }
             ]
@@ -44,45 +44,45 @@
             "links": [],
             "photos": [
                 {
-                    "url": "assets/images/projects/mrzqasgwe5xs-Screenshot_2026-06-28_172335.png",
+                    "url": "assets/images/projects/mrzqasgwe5xs-Screenshot_2026-06-28_172335.webp",
                     "size": "100%",
                     "caption": "Image 1: Full Blender model"
                 },
                 {
-                    "url": "assets/images/projects/mrzqau7xxieb-Screenshot_2026-06-28_172351.png",
+                    "url": "assets/images/projects/mrzqau7xxieb-Screenshot_2026-06-28_172351.webp",
                     "size": "100%",
                     "caption": "Image 2: Close up of engrave pattern"
                 },
                 {
-                    "url": "assets/images/projects/ms0gkpfwx4t9-IMG_4095.jpg",
+                    "url": "assets/images/projects/ms0gkpfwx4t9-IMG_4095.webp",
                     "size": "100%",
                     "caption": "Image 3: Cnc engraved panel"
                 },
                 {
-                    "url": "assets/images/projects/ms0gkssgz236-IMG_4110.jpg",
+                    "url": "assets/images/projects/ms0gkssgz236-IMG_4110.webp",
                     "size": "100%",
                     "caption": "Image 4: Cnc engraved panel with lacquer inlay "
                 },
                 {
-                    "url": "assets/images/projects/ms0gl34z5msf-IMG_4327.jpg",
+                    "url": "assets/images/projects/ms0gl34z5msf-IMG_4327.webp",
                     "size": "100%",
                     "caption": "Image 5: Finished base to lay the painting on"
                 },
                 {
-                    "url": "assets/images/projects/ms0gmsaef8ys-Screenshot_2026-06-28_001730.png",
+                    "url": "assets/images/projects/ms0gmsaef8ys-Screenshot_2026-06-28_001730.webp",
                     "size": "100%",
                     "caption": "Image 6: Fully finished Easel"
                 }
             ],
             "id": 8,
-            "previewImage": "assets/images/uploads/mrzqaot003e7-Screenshot_2026-06-28_001730.png",
+            "previewImage": "assets/images/uploads/mrzqaot003e7-Screenshot_2026-06-28_001730.webp",
             "previewImageFit": "contain",
             "previewImagePosition": "center center"
         },
         {
             "name": "Citro Bar ",
             "description": "A group project to create a full-body mosquito-repellent soap using natural ingredients from scratch. \n \n",
-            "fullDescription": "The report presents a comprehensive examination of the team’s design course project through its research methodology and project outcomes. Our problem, that campers and backpackers need a portable, all-natural soap that both cleans effectively and deters insects — without harsh chemicals to harm your skin or the environment. The team developed an all-natural camping soap to simultaneously clean and protect you against pests, all while being environmentally safe. Through extensive research, the team selected citronella and cedar scents because of its natural scent and proven ability to repel insects. These features made it the clear favorite among our choices. Studies support citronella’s bug repellent capabilities; it is derived naturally from the extract of lemongrass. Its use as an effective insect deterrent (Jayadi et al., 2023) has been well documented. To prolong citronella effectiveness, the scent will be protected using cedar oil which serves as an anchoring agent (Adams, 1991). This report breaks down our blueprint and design process in detail.\nStarting with the canola oil-based soap to test the ratios of lye, water, and oil, differing methods of saponification were tested, with varying efficacy. These results led the group to pick a cold process method to produce the ideal camping soap. This soap consists of 4 main oils, lye, two essential oils for scent, and a natural yellow dye. The 4 main oils are olive, shea butter, palm, and coconut for the foundation for scent the team chose citronella and cedar. The dye picked would be a bright yellow to complement the citrus and natural tones. All this would be incapsulated into a different shape than the bars made previously in preliminary testing, instead, opting for a wedge shape for easy packing and reinforcing the lemon characteristics. To hold these wedges a capsule with a simple screw mechanism was chosen to give easy, yet secure access for those in harsh environments. \n\nLink below for the full report \n\nThank you to my exceptional teammates Noah Koets, Ryder Campbell,and and Marcus MacInnis.\n\n",
+            "fullDescription": "The report presents a comprehensive examination of the team\u2019s design course project through its research methodology and project outcomes. Our problem, that campers and backpackers need a portable, all-natural soap that both cleans effectively and deters insects \u2014 without harsh chemicals to harm your skin or the environment. The team developed an all-natural camping soap to simultaneously clean and protect you against pests, all while being environmentally safe. Through extensive research, the team selected citronella and cedar scents because of its natural scent and proven ability to repel insects. These features made it the clear favorite among our choices. Studies support citronella\u2019s bug repellent capabilities; it is derived naturally from the extract of lemongrass. Its use as an effective insect deterrent (Jayadi et al., 2023) has been well documented. To prolong citronella effectiveness, the scent will be protected using cedar oil which serves as an anchoring agent (Adams, 1991). This report breaks down our blueprint and design process in detail.\nStarting with the canola oil-based soap to test the ratios of lye, water, and oil, differing methods of saponification were tested, with varying efficacy. These results led the group to pick a cold process method to produce the ideal camping soap. This soap consists of 4 main oils, lye, two essential oils for scent, and a natural yellow dye. The 4 main oils are olive, shea butter, palm, and coconut for the foundation for scent the team chose citronella and cedar. The dye picked would be a bright yellow to complement the citrus and natural tones. All this would be incapsulated into a different shape than the bars made previously in preliminary testing, instead, opting for a wedge shape for easy packing and reinforcing the lemon characteristics. To hold these wedges a capsule with a simple screw mechanism was chosen to give easy, yet secure access for those in harsh environments. \n\nLink below for the full report \n\nThank you to my exceptional teammates Noah Koets, Ryder Campbell,and and Marcus MacInnis.\n\n",
             "previewImage": "",
             "previewImageFit": "cover",
             "previewImagePosition": "center center",
@@ -98,19 +98,19 @@
             ],
             "photos": [
                 {
-                    "url": "assets/images/projects/msngv3qqr3e9-lemon1.jpg",
+                    "url": "assets/images/projects/msngv3qqr3e9-lemon1.webp",
                     "size": "100%"
                 },
                 {
-                    "url": "assets/images/projects/msngv79c28ls-Picture2.jpg",
+                    "url": "assets/images/projects/msngv79c28ls-Picture2.webp",
                     "size": "100%"
                 },
                 {
-                    "url": "assets/images/projects/msngvar1p4hf-Picture3.png",
+                    "url": "assets/images/projects/msngvar1p4hf-Picture3.webp",
                     "size": "100%"
                 },
                 {
-                    "url": "assets/images/projects/msngvdljs7t7-Picture4.jpg",
+                    "url": "assets/images/projects/msngvdljs7t7-Picture4.webp",
                     "size": "100%"
                 }
             ],

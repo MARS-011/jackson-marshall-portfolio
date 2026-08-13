@@ -31,6 +31,31 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+
+    <!-- SEO & Accessibility -->
+    <meta name="author" content="Jackson Marshall">
+    <meta name="robots" content="index, follow">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Jackson Marshall",
+      "jobTitle": "Chemical Engineer",
+      "url": "https://mars-011.github.io/jackson-marshall-portfolio/",
+      "sameAs": [
+        "https://github.com/MARS-011",
+        "https://www.linkedin.com/in/jackson-marshall-225355358/"
+      ],
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "Dalhousie University"
+      },
+      "knowsAbout": ["Chemical Engineering", "Process Optimization", "Generative Art", "Systems Design"]
+    }
+    </script>
 </head>
 <body>
     <div class="page-transition-overlay" aria-hidden="true"></div>
@@ -56,7 +81,7 @@
             <li><a class="nav-link" href="writing.html">Writing</a></li>
             <li><a class="nav-link" href="gallery.html">Gallery</a></li>
             <li><a class="nav-link" href="resume.html">Resume</a></li>
-            <li><a class="nav-link admin-shortcut" href="admin.html" style="opacity: 0.4; font-size: 0.75rem;">✎</a></li>
+            <li><a class="nav-link admin-shortcut" href="admin.html" style="opacity: 0.4; font-size: 0.75rem;" aria-label="Admin Dashboard">✎</a></li>
         </ul>
     </nav>
 

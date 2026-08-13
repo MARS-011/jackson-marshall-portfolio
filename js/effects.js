@@ -46,8 +46,58 @@ const PortfolioEffects = (function () {
         if (!document.querySelector('.grain-overlay')) {
             const grain = document.createElement('div');
             grain.className = 'grain-overlay';
+            grain.setAttribute('aria-hidden', 'true');
             document.body.appendChild(grain);
         }
+
+        if (!document.querySelector('.scanline-overlay')) {
+            const scanlines = document.createElement('div');
+            scanlines.className = 'scanline-overlay';
+            scanlines.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(scanlines);
+        }
+    }
+
+    /* ------------------------------------------------------------------
+       Crosshair cursor — desktop-only, intentionally quiet, and disabled
+       for touch or reduced-motion environments.
+       ------------------------------------------------------------------ */
+    function initCursor() {
+        if (!supportsFinePointer || prefersReducedMotion || document.querySelector('.cursor-reticle')) return;
+
+        const cursor = document.createElement('div');
+        cursor.className = 'cursor-reticle';
+        cursor.setAttribute('aria-hidden', 'true');
+        cursor.innerHTML = '<span class="cursor-reticle__ring"></span><span class="cursor-reticle__crosshair"></span><span class="cursor-reticle__label"></span>';
+        document.body.appendChild(cursor);
+        document.body.classList.add('has-custom-cursor');
+
+        let x = window.innerWidth / 2;
+        let y = window.innerHeight / 2;
+        let rafId = null;
+
+        const render = () => {
+            cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            rafId = null;
+        };
+
+        const move = (event) => {
+            x = event.clientX;
+            y = event.clientY;
+            cursor.classList.add('is-visible');
+            if (rafId === null) rafId = requestAnimationFrame(render);
+        };
+
+        const updateTarget = (event) => {
+            const target = event.target.closest('a, button, .project-card, .project-card-expandable, .gallery-item, .article-item, input, textarea, select');
+            const label = cursor.querySelector('.cursor-reticle__label');
+            cursor.classList.toggle('is-active', Boolean(target));
+            if (label) label.textContent = target?.dataset.cursorLabel || (target ? 'OPEN' : '');
+        };
+
+        document.addEventListener('mousemove', move, { passive: true });
+        document.addEventListener('mouseover', updateTarget, { passive: true });
+        document.addEventListener('mouseleave', () => cursor.classList.remove('is-visible'));
     }
 
     /* ------------------------------------------------------------------
@@ -190,20 +240,24 @@ const PortfolioEffects = (function () {
         ScrollTrigger.batch(els, {
             start: 'top 88%',
             once: true,
-            onEnter: (batch) => gsap.to(batch, {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.7,
-                stagger: 0.08,
-                ease: 'power3.out',
-                overwrite: true,
-            }),
+            onEnter: (batch) => {
+                batch.forEach((el) => el.classList.add('is-revealed'));
+                gsap.to(batch, {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.7,
+                    stagger: 0.08,
+                    ease: 'power3.out',
+                    overwrite: true,
+                });
+            },
         });
 
         // Safety net: force items visible after a few seconds regardless,
         // in case ScrollTrigger never fires for them (e.g. layout edge case).
         setTimeout(() => {
+            els.forEach((el) => el.classList.add('is-revealed'));
             gsap.to(els, { opacity: 1, y: 0, scale: 1, duration: 0.4, overwrite: 'auto' });
         }, 4000);
     }
@@ -478,9 +532,10 @@ const PortfolioEffects = (function () {
 
     document.addEventListener('DOMContentLoaded', () => {
         initGrain();
+        initCursor();
         initPageTransitions();
         initMagneticLinks();
     });
 
-    return { initLenis, initMagneticLinks, initGridReveal, initScrollTilt, initTextReveal, initCardTilt3D, initSparkles };
+    return { initLenis, initMagneticLinks, initGridReveal, initScrollTilt, initTextReveal, initCardTilt3D, initSparkles, initCursor };
 })();
