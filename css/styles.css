@@ -642,7 +642,8 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--color-navy);
+    /* Keep the global fixed .bg-video visible at full viewport size. */
+    background: rgba(10, 14, 46, 0.45);
     z-index: 10000; /* Higher z-index */
     display: none;
     opacity: 0;
@@ -1327,7 +1328,7 @@ body.overlay-open {
 .writing-page-body .bg-video,
 .gallery-page-body .bg-video {
     display: block;
-    opacity: 0.5; /* Slightly lower opacity for sub-pages to maintain readability */
+    opacity: 0.6; /* Match home page opacity */
 }
 
 .stripe-press-container {

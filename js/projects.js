@@ -100,15 +100,10 @@ function openProjectDetail(project) {
         </header>
 
         <div class="detail-body">
-            <!-- Project Video Aesthetic -->
-            <div class="detail-video-wrapper" style="width: 100%; aspect-ratio: 16/9; max-height: 60vh; overflow: hidden; margin-bottom: 3rem; border: 1px solid rgba(184, 197, 255, 0.1); border-radius: 4px; position: relative;">
-                <video autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0.4;">
-                    <source src="assets/videos/orbis_blueprint.webm" type="video/webm">
-                    <source src="assets/videos/orbis_blueprint.mp4" type="video/mp4">
-                </video>
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, transparent, rgba(15, 17, 26, 0.8));"></div>
+            <!-- Project Hero Visual -->
+            <div class="detail-hero-visual" style="width: 100%; height: 45vh; display: flex; align-items: center; justify-content: center; margin-bottom: 4rem; position: relative; z-index: 1;">
                 ${(project.previewImage && String(project.previewImage).trim() !== '') ? `
-                    <img src="${String(project.previewImage)}" alt="${project.name} Preview" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 80%; width: auto; max-width: 90%; object-fit: contain; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));">
+                    <img src="${String(project.previewImage)}" alt="${project.name} Preview" style="max-height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 20px 50px rgba(0,0,0,0.5));">
                 ` : ''}
             </div>
             <div class="detail-description">${DataManager.formatText(project.fullDescription)}</div>
