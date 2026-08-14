@@ -199,8 +199,23 @@ function renderProjectsEditor() {
 	            </div>
 
                 <div class="form-group">
-                    <label>External Links (format: Label|URL, comma-separated)</label>
-                    <input type="text" value="${(project.links || []).map(l => `${l.label}|${l.url}`).join(', ')}" onchange="updateProjectField(${project.id}, 'links', this.value.split(',').filter(s => s.trim()).map(s => { const [label, url] = s.split('|'); return { label: label?.trim(), url: url?.trim() }; }))">
+                    <label>Links & Attachments (Slide Shows, Documents, etc.)</label>
+                    <div class="admin-links-list" data-project-id="${project.id}" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+                        ${(project.links || []).map((link, linkIndex) => `
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <input type="text" value="${link.label}" placeholder="Label (e.g. Slide Show)" style="width: 140px;" onchange="updateProjectLink(${project.id}, ${linkIndex}, 'label', this.value)">
+                                <input type="text" value="${link.url}" placeholder="URL" style="flex: 1;" onchange="updateProjectLink(${project.id}, ${linkIndex}, 'url', this.value)">
+                                <button class="delete-button" style="padding: 2px 8px;" onclick="removeProjectLink(${project.id}, ${linkIndex})">×</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="add-button" style="margin: 0; padding: 4px 12px; font-size: 0.75rem;" onclick="addProjectLink(${project.id})">+ Add Link</button>
+                        <div style="flex: 1; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px; display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 0.75rem; color: #5a6490;">Upload PDF:</span>
+                            <input type="file" accept=".pdf" style="font-size: 0.7rem; color: #b8c5ff;" onchange="handleProjectDocUpload(${project.id}, event)">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -262,6 +277,54 @@ function updateProjectField(id, field, value) {
     showSyncIndicator();
     // Re-render to ensure UI reflects the latest state from DataManager
     renderProjectsEditor();
+}
+
+function addProjectLink(id) {
+    const project = DataManager.getProjects().find(p => p.id === id);
+    if (!project) return;
+    const links = project.links || [];
+    links.push({ label: 'New Link', url: '' });
+    updateProjectField(id, 'links', links);
+}
+
+function updateProjectLink(projectId, linkIndex, field, value) {
+    const project = DataManager.getProjects().find(p => p.id === projectId);
+    if (!project) return;
+    const links = project.links || [];
+    if (links[linkIndex]) {
+        links[linkIndex][field] = value;
+        DataManager.updateProject(projectId, { links });
+        showSyncIndicator();
+    }
+}
+
+function removeProjectLink(projectId, linkIndex) {
+    const project = DataManager.getProjects().find(p => p.id === projectId);
+    if (!project) return;
+    const links = project.links || [];
+    links.splice(linkIndex, 1);
+    updateProjectField(projectId, 'links', links);
+}
+
+async function handleProjectDocUpload(id, event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+        showSyncIndicator();
+        const { path } = await StagingManager.stage(file, 'assets/docs');
+        const project = DataManager.getProjects().find(p => p.id === id);
+        if (project) {
+            const links = project.links || [];
+            links.push({ label: file.name.replace('.pdf', ''), url: path });
+            updateProjectField(id, 'links', links);
+        }
+    } catch (error) {
+        console.error('Error staging document:', error);
+        alert(`Couldn't process document: ${error.message}`);
+    } finally {
+        event.target.value = '';
+    }
 }
 
 // ============================================================================

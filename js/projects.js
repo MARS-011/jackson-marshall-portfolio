@@ -135,8 +135,8 @@ function openProjectDetail(project) {
                 </a>` : ''}
                 ${(project.links || []).map(link => `
                     <a href="${link.url}" class="detail-link-card" target="_blank">
-                        <span class="link-label">External Resource</span>
-                        <span class="link-url">${link.label} →</span>
+                        <span class="link-label">${link.label}</span>
+                        <span class="link-url">${link.url.includes('assets/docs') ? 'View Document' : (link.url.includes('docs.google.com') ? 'View Slide Show' : 'Visit Link')} →</span>
                     </a>
                 `).join('')}
             </div>

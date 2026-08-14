@@ -53,8 +53,23 @@ const StagingManager = (() => {
 
     // Stage a file for later upload. Returns { path, blobUrl } immediately.
     async function stage(file, folder) {
-        const { blob, type } = await compressImage(file);
-        const ext = type === 'image/png' ? '.png' : (type === 'image/jpeg' ? '.jpg' : ('.' + (file.name.split('.').pop() || 'bin')));
+        let blob, type;
+        
+        if (file.type.startsWith('image/')) {
+            const result = await compressImage(file);
+            blob = result.blob;
+            type = result.type;
+        } else {
+            // Non-image files (PDFs, etc.) are staged as-is
+            blob = file;
+            type = file.type;
+        }
+
+        const ext = type === 'image/png' ? '.png' : 
+                    (type === 'image/jpeg' ? '.jpg' : 
+                    (type === 'application/pdf' ? '.pdf' : 
+                    ('.' + (file.name.split('.').pop() || 'bin'))));
+        
         const baseName = file.name.replace(/\.[^.]+$/, '');
         const path = makePath(folder, baseName + ext);
         const blobUrl = URL.createObjectURL(blob);
